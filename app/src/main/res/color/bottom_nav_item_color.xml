@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Ítem seleccionado -->
+    <item android:color="@color/miroti_orange" android:state_checked="true" />
+    <!-- Ítem no seleccionado -->
+    <item android:color="#B3FFFFFF" />
+</selector>

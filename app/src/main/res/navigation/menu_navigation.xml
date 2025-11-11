@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/platosFragment">
+
+    <fragment
+        android:id="@+id/platosFragment"
+        android:name="com.jorge.mirotimobile.ui.platos.PlatosFragment"
+        android:label="Platos" />
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.jorge.mirotimobile.ui.nav.MenuFragment"
+        android:label="Menú" />
+
+    <fragment
+        android:id="@+id/pedidosFragment"
+        android:name="com.jorge.mirotimobile.ui.pedidos.PedidosFragment"
+        android:label="Pedidos" />
+
+    <fragment
+        android:id="@+id/trackingFragment"
+        android:name="com.jorge.mirotimobile.ui.seguimiento.TrackingFragment"
+        android:label="Seguimiento" />
+
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.jorge.mirotimobile.ui.perfil.PerfilFragment"
+        android:label="Perfil" />
+</navigation>

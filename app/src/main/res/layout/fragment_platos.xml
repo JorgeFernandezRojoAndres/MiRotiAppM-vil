@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutPlatos"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FAFAFA"
+    tools:context=".ui.platos.PlatosFragment">
+
+    <!-- 🔹 Barra de carga centrada -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_marginTop="24dp" />
+
+    <!-- 🔹 Mensaje de error -->
+    <TextView
+        android:id="@+id/txtError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Error al cargar los platos"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#B00020"
+        android:background="#FFF0F0"
+        android:padding="10dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+    <!-- 🔹 Lista de platos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPlatos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_plato" />
+
+</LinearLayout>

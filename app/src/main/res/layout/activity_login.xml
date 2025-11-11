@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_login_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
+        android:layout_marginTop="140dp">   <!-- 🔹 Baja todo el contenido -->
+
+        <!-- 🔸 Logo -->
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_miroti"
+            android:contentDescription="Logo MiRoti"
+            android:layout_marginBottom="48dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
+
+        <!-- 🔸 Email -->
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Correo electrónico"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edittext_border_orange"
+            android:padding="12dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#d6d6d6"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 🔸 Contraseña -->
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:background="@drawable/edittext_border_orange"
+            android:padding="12dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#d6d6d6"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 🔸 Olvidé mi contraseña -->
+        <Button
+            android:id="@+id/btnForgot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Olvidé mi contraseña"
+            android:textColor="#ff6600"
+            android:textSize="14sp"
+            android:background="@android:color/transparent"
+            android:textStyle="normal"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:layout_marginBottom="20dp"
+            android:foreground="?attr/selectableItemBackground" />
+
+        <!-- 🔸 Botón de HomeClienteFragment de sesión -->
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="INICIAR SESIÓN"
+            android:backgroundTint="#ff6600"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- 🔸 Huella digital -->
+        <LinearLayout
+            android:id="@+id/btnHuella"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="18dp"
+            android:padding="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/fingerprint_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+                app:tint="#cccccc"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Entrar con huella digital"
+                android:textColor="#cccccc"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- 🔸 ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 🔸 Error -->
+        <TextView
+            android:id="@+id/txtError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FF4444"
+            android:gravity="center"
+            android:text=""
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+
+        <!-- 🔸 Registro -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tienes una cuenta?"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <Button
+                android:id="@+id/btnRegistrarse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrarse"
+                android:textColor="#ff6600"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:layout_marginTop="4dp"
+                android:foreground="?attr/selectableItemBackground" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
