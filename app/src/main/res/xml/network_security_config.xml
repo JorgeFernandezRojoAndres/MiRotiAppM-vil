@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- 🌐 Permitir tráfico HTTP (sin HTTPS) en entorno de desarrollo -->
+    <!-- Permitir tráfico HTTP (sin HTTPS) en entorno de desarrollo -->
     <domain-config cleartextTrafficPermitted="true">
 
-        <!-- ✅ IP de tu servidor local en la red -->
-        <domain includeSubdomains="true">192.168.1.37</domain>
+        <!-- IP de tu servidor local en la red  -->
+        <domain includeSubdomains="true">192.168.1.36</domain>
 
-        <!-- 💻 Host usado por el emulador Android para acceder al localhost -->
+        <!-- Host usado por el emulador Android para acceder al localhost -->
         <domain includeSubdomains="true">10.0.2.2</domain>
 
-        <!-- 🧩 localhost por compatibilidad (útil si probás con certificados locales) -->
+        <!-- localhost por compatibilidad -->
         <domain includeSubdomains="true">localhost</domain>
 
-        <!-- 🔐 Confiar en los certificados del sistema (para HTTPS dev-certs de .NET) -->
+        <!-- Confiar en los certificados del sistema (para HTTPS dev-certs de .NET) -->
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

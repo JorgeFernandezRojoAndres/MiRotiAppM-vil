@@ -1,17 +1,33 @@
 package com.jorge.mirotimobile.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * 🍽️ Modelo Plato — representa los datos de un plato obtenidos desde la API MiRoti.
  * Refleja fielmente la estructura del backend (.NET) incluyendo precioVenta, costoTotal e imagenUrl.
  */
 public class Plato {
 
+    @SerializedName(value = "id", alternate = {"Id"})
     private int id;
+
+    @SerializedName(value = "nombre", alternate = {"Nombre"})
     private String nombre;
+
+    @SerializedName(value = "descripcion", alternate = {"Descripcion"})
     private String descripcion;
+
+    // ✅ Acepta variantes de casing desde el backend (.NET suele enviar PascalCase y alias "Precio")
+    @SerializedName(value = "Precio", alternate = {"precio", "precioVenta", "PrecioVenta"})
     private double precioVenta;   // ✅ igual que en el backend
+
+    @SerializedName(value = "costoTotal", alternate = {"CostoTotal"})
     private double costoTotal;
+
+    @SerializedName(value = "disponible", alternate = {"Disponible"})
     private boolean disponible;
+
+    @SerializedName(value = "imagenUrl", alternate = {"ImagenUrl", "imagenURL"})
     private String imagenUrl;     // ✅ nueva propiedad opcional para imagen
 
     // 🔹 Constructor vacío (requerido por Retrofit/Gson)

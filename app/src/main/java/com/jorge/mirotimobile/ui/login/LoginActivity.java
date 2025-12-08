@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Observadores del ViewModel — sin condicionales
         vm.getNavigateToMain().observe(this, unused -> navegarAlMain());
+        vm.getNavigateToRegister().observe(this, unused -> navegarAlRegistro());
         vm.getShowError().observe(this,
                 show -> binding.txtError.setVisibility(show ? android.view.View.VISIBLE : android.view.View.GONE));
         vm.getMensajeError().observe(this, binding.txtError::setText);
@@ -48,6 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("abrirFragment", "platos");
         startActivity(intent);
         finish();
+    }
+
+    private void navegarAlRegistro() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     @Override

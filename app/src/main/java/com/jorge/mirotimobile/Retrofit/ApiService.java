@@ -1,6 +1,7 @@
 package com.jorge.mirotimobile.Retrofit;
 
 import com.jorge.mirotimobile.model.Plato;
+import com.jorge.mirotimobile.model.RegisterRequest;
 import com.jorge.mirotimobile.model.Usuario;
 
 import java.util.List;
@@ -20,9 +21,16 @@ public interface ApiService {
     // ---------------------------------------------------------
     // 🔐 LOGIN — autenticación de usuarios (Cliente / Cadete)
     // ---------------------------------------------------------
-    // Endpoint real: /api/authapi/login
-    @POST("authapi/login")
+    // Endpoint real: /api/AuthApi/login (respeta mayúsculas del backend)
+    @POST("AuthApi/login")
     Call<TokenResponse> login(@Body Usuario usuario);
+
+    // ---------------------------------------------------------
+    // 📝 REGISTER — registro de nuevos clientes
+    // ---------------------------------------------------------
+    // Endpoint real: /api/AuthApi/register
+    @POST("AuthApi/register")
+    Call<TokenResponse> register(@Body RegisterRequest request);
 
     // ---------------------------------------------------------
     // 🍽️ PLATOS — listado de platos disponibles
@@ -35,7 +43,7 @@ public interface ApiService {
     // 🧩 Clase interna: respuesta del login
     // ---------------------------------------------------------
     /**
-     * 📦 TokenResponse — Representa la respuesta del endpoint /authapi/login.
+     * 📦 TokenResponse — Representa la respuesta del endpoint /authapi/login y /authapi/register.
      * Estructura esperada desde el backend:
      * {
      *   "token": "JWT...",

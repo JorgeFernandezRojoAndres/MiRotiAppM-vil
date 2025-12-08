@@ -8,7 +8,7 @@
     card_view:cardCornerRadius="14dp"
     card_view:cardElevation="6dp"
     card_view:cardUseCompatPadding="true"
-    android:background="@color/white">
+    card_view:cardBackgroundColor="#1F1F1F">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:text="Nombre del Plato"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#212121" />
+            android:textColor="@color/white" />
 
         <!-- 🔹 Descripción -->
         <TextView
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:text="Descripción breve del plato o ingredientes principales."
             android:textSize="14sp"
-            android:textColor="#666666"
+            android:textColor="@color/text_light"
             android:layout_marginTop="4dp"
             android:lineSpacingExtra="2dp" />
 

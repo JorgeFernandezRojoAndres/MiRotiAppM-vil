@@ -26,17 +26,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * 🔧 RetrofitClient — Configura Retrofit con:
- *  - Token JWT automático
- *  - HTTPS con certificado local (solo desarrollo)
- *  - Logging detallado de peticiones/respuestas
+ * RetrofitClient: Configura Retrofit con logging y token JWT.
  */
 public class RetrofitClient {
 
     private static Retrofit retrofit = null;
 
-    // 🌐 URL base fija (asegura que apunte a la API HTTPS con /api/)
-    private static final String BASE_URL = "https://192.168.1.37:5001/api/";
+    // URL base fija (actualizada a HTTP porque el backend usa puerto 5000 sin HTTPS)
+    private static final String BASE_URL = "http://192.168.1.36:5000/api/";
 
     /**
      * Devuelve una instancia de Retrofit configurada.
@@ -44,11 +41,9 @@ public class RetrofitClient {
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
 
-            // 🔍 Interceptor de logs: muestra request y response en Logcat
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // 🔐 Interceptor: agrega token JWT automáticamente
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
@@ -73,42 +68,42 @@ public class RetrofitClient {
                         }
                     });
 
-            // ⚠️ Permitir certificados HTTPS autofirmados (solo en entorno local)
-            try {
-                TrustManager[] trustAllCerts = new TrustManager[]{
-                        new X509TrustManager() {
-                            @Override
-                            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+            // Solo configuramos SSL relajado si el endpoint es HTTPS
+            if (BASE_URL.startsWith("https")) {
+                try {
+                    TrustManager[] trustAllCerts = new TrustManager[]{
+                            new X509TrustManager() {
+                                @Override
+                                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
 
-                            @Override
-                            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+                                @Override
+                                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
 
-                            @Override
-                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                                return new java.security.cert.X509Certificate[]{};
+                                @Override
+                                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                    return new java.security.cert.X509Certificate[]{};
+                                }
                             }
+                    };
+
+                    SSLContext sslContext = SSLContext.getInstance("SSL");
+                    sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                    clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
+
+                    clientBuilder.hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            return true; // aceptar cualquier host (solo desarrollo)
                         }
-                };
+                    });
 
-                SSLContext sslContext = SSLContext.getInstance("SSL");
-                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-                clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
-
-                clientBuilder.hostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return true; // ✅ Acepta cualquier host (solo para desarrollo)
-                    }
-                });
-
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                e.printStackTrace();
+                } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                    e.printStackTrace();
+                }
             }
 
-            // 🧱 Crear cliente HTTP
             OkHttpClient client = clientBuilder.build();
 
-            // 🚀 Construir instancia Retrofit
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -119,9 +114,7 @@ public class RetrofitClient {
         return retrofit;
     }
 
-    /**
-     * 🔁 Permite reiniciar la instancia (por ejemplo, al cerrar sesión)
-     */
+    
     public static void resetClient() {
         retrofit = null;
     }

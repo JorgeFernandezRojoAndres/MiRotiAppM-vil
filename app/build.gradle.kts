@@ -67,6 +67,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
+    // 🔹 Imágenes
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
     // 🔹 Lifecycle (ViewModel + LiveData)
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.3")
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.3")

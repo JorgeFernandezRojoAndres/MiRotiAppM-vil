@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config">
 
-        <!-- 🔹 Pantalla principal de HomeClienteFragment: Login -->
+        <!-- 🔹 Pantalla principal de Login -->
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true">
@@ -28,8 +28,11 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 MainActivity (se mantiene registrada pero no es launcher) -->
+        <!-- 🔹 MainActivity -->
         <activity android:name=".MainActivity" />
+
+        <!-- 🔹 RegisterActivity -->
+        <activity android:name=".ui.login.RegisterActivity" />
 
     </application>
 

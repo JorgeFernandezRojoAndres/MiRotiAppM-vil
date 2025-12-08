@@ -17,15 +17,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * 🧠 LoginViewModel — Controla toda la lógica del login (MVVM estricto).
- * Incluye soporte para huella digital y persistencia segura de credenciales.
+ * LoginViewModel: Maneja la lógica de login (incluye huella y persistencia de credenciales).
  */
 public class LoginViewModel extends AndroidViewModel {
 
-    // ==============================
-    // 🔹 Estados observables
-    // ==============================
     private final MutableLiveData<Void> navigateToMain = new MutableLiveData<>();
+    private final MutableLiveData<Void> navigateToRegister = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showError = new MutableLiveData<>();
     private final MutableLiveData<String> mensajeError = new MutableLiveData<>();
@@ -37,11 +34,12 @@ public class LoginViewModel extends AndroidViewModel {
         session = new SessionManager(application.getApplicationContext());
     }
 
-    // ==============================
-    // 🔹 Getters LiveData
-    // ==============================
     public LiveData<Void> getNavigateToMain() {
         return navigateToMain;
+    }
+
+    public LiveData<Void> getNavigateToRegister() {
+        return navigateToRegister;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -56,9 +54,6 @@ public class LoginViewModel extends AndroidViewModel {
         return mensajeError;
     }
 
-    // ==============================
-    // 🔹 Eventos desde la vista
-    // ==============================
     public void onLoginClicked(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             mostrarError("Completa todos los campos");
@@ -76,12 +71,9 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void onRegisterClicked() {
-        mostrarError("Función de registro aún no disponible.");
+        navigateToRegister.postValue(null);
     }
 
-    // ==============================
-    // 🔹 Lógica de negocio
-    // ==============================
     private void iniciarSesion(String email, String password) {
         loading.postValue(true);
         showError.postValue(false);
@@ -98,21 +90,26 @@ public class LoginViewModel extends AndroidViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiService.TokenResponse body = response.body();
 
-                    // 🔒 Validar acceso permitido
-                    if (!"Cliente".equalsIgnoreCase(body.getRol()) &&
-                            !"Cadete".equalsIgnoreCase(body.getRol())) {
-                        mostrarError("Acceso restringido: solo Clientes o Cadetes pueden usar la app.");
+                    // Validar acceso permitido (permite Admin/Administrador, Cliente, Cadete)
+                    String rol = body.getRol();
+                    boolean rolPermitido =
+                            "Cliente".equalsIgnoreCase(rol) ||
+                            "Cadete".equalsIgnoreCase(rol) ||
+                            "Admin".equalsIgnoreCase(rol) ||
+                            "Administrador".equalsIgnoreCase(rol);
+
+                    if (!rolPermitido) {
+                        mostrarError("Acceso restringido: rol no permitido en la app.");
                         return;
                     }
 
-                    // ✅ Guardar token y datos
+                    // Guardar token y datos
                     session.saveToken(body.getToken());
                     session.saveUserData(body.getId(), body.getEmail(), body.getRol());
 
-                    // ✅ Guardar credenciales para login por huella
+                    // Guardar credenciales para login por huella
                     session.saveCredentials(body.getEmail(), password);
 
-                    // 🔹 Éxito → navegar
                     mensajeError.postValue(null);
                     showError.postValue(false);
                     navigateToMain.postValue(null);
@@ -129,9 +126,6 @@ public class LoginViewModel extends AndroidViewModel {
         });
     }
 
-    // ==============================
-    // 🔹 Huella digital
-    // ==============================
     private void iniciarSesionConHuella() {
         String emailGuardado = session.getSavedEmail();
         String passGuardado = session.getSavedPassword();
@@ -144,9 +138,6 @@ public class LoginViewModel extends AndroidViewModel {
         iniciarSesion(emailGuardado, passGuardado);
     }
 
-    // ==============================
-    // 🔹 Utilidades internas
-    // ==============================
     private void mostrarError(String mensaje) {
         mensajeError.postValue(mensaje);
         showError.postValue(true);

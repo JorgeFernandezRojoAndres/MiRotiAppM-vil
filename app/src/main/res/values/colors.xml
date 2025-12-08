@@ -19,4 +19,9 @@
     <color name="nav_icon_inactive">#B0B0B0</color>
     <color name="nav_icon_active">@color/miroti_orange</color>
 
+    <!-- 🟢 Estados pedidos -->
+    <color name="estado_entregado">#4CAF50</color>
+    <color name="estado_proceso">#FF9800</color>
+    <color name="estado_cancelado">#F44336</color>
+
 </resources>
