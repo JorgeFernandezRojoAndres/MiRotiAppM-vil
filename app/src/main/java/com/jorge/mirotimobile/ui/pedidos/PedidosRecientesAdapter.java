@@ -57,8 +57,6 @@ public class PedidosRecientesAdapter extends RecyclerView.Adapter<PedidosRecient
             binding.txtPedidoTitulo.setText(String.format(Locale.getDefault(), "Pedido %s", pedido.getNumero()));
             binding.txtPedidoFecha.setText("Fecha: " + pedido.getFecha());
             binding.txtPedidoEstado.setText("Estado: " + pedido.getEstado());
-            binding.txtPedidoEstadoBadge.setText(pedido.getEstado());
-
             int colorRes;
             switch (pedido.getEstado().toLowerCase(Locale.ROOT)) {
                 case "entregado":
@@ -74,8 +72,7 @@ public class PedidosRecientesAdapter extends RecyclerView.Adapter<PedidosRecient
                     colorRes = R.color.text_light;
                     break;
             }
-            binding.txtPedidoEstadoBadge.setBackgroundTintList(
-                    ContextCompat.getColorStateList(binding.getRoot().getContext(), colorRes));
+            binding.txtPedidoEstado.setTextColor(ContextCompat.getColor(binding.getRoot().getContext(), colorRes));
         }
     }
 }

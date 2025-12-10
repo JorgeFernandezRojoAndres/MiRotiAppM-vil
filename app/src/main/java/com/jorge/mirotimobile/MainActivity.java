@@ -4,14 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 
-import androidx.activity.EdgeToEdge;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-// Imports para Insets ya no son necesarios sin el listener de padding personalizado
-// import androidx.core.graphics.Insets;
-// import androidx.core.view.ViewCompat;
-// import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.ui.login.LoginActivity;
 
@@ -23,26 +25,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        EdgeToEdge.enable(this); // Mantener EdgeToEdge habilitado
 
         setContentView(R.layout.activity_main);
 
-        // 🔹 Hacer barras del sistema transparentes
-        Window window = getWindow();
-        window.setNavigationBarColor(getResources().getColor(android.R.color.transparent));
-        window.setStatusBarColor(getResources().getColor(android.R.color.transparent));
 
-        // 🔹 ELIMINADO: El listener de insets personalizado que establecía padding inferior a 0.
-        // Ahora la BottomNavigationView con android:fitsSystemWindows="true" manejará esto.
-        /*
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
-        */
 
-        // 🔹 Verificar sesión
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.BLACK));
+        bottomNav.setItemTextColor(ColorStateList.valueOf(Color.BLACK));
+        
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            NavigationUI.setupWithNavController(bottomNav, navController);
+        }
+
         session = new SessionManager(getApplicationContext());
         String token = session.getToken();
 

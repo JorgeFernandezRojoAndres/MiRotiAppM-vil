@@ -33,7 +33,7 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
 
     // URL base fija (actualizada a HTTP porque el backend usa puerto 5000 sin HTTPS)
-    private static final String BASE_URL = "http://192.168.1.36:5000/api/";
+    private static final String BASE_URL = "http://192.168.1.38:5000/api/";
 
     /**
      * Devuelve una instancia de Retrofit configurada.

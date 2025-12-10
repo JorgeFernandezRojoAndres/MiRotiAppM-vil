@@ -1,23 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- ============================== -->
-    <!--   TEMA BASE (EL TUYO)          -->
-    <!-- ============================== -->
     <style name="Base.Theme.MiRotiMobile" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Tu configuración original -->
+        <item name="colorPrimary">#FCA311</item>
+        <item name="colorPrimaryVariant">#E59500</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
     </style>
 
     <style name="Theme.MiRotiMobile" parent="Base.Theme.MiRotiMobile" />
-
-    <!-- ============================== -->
-    <!--   ESTILO PARA BOTTOM NAV       -->
-    <!-- ============================== -->
-    <style name="CustomBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
-        <!-- Corregido: Aplicar un ColorStateList para itemIconTint y itemTextColor -->
-        <!-- Usamos @color/mirati_selector que parece estar definido en tu proyecto -->
-        <item name="itemIconTint">@color/mirati_selector</item>
-        <item name="itemTextColor">@color/mirati_selector</item>
-        <item name="android:background">@color/white</item>
-    </style>
 
 </resources>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/estado_entregado" />
+
+    <!-- fondo naranja con bordes redondeados para el indicador de estado -->
+    <solid android:color="#FCA311" />
     <corners android:radius="8dp" />
+
 </shape>

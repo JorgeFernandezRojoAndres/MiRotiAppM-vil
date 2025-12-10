@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- En blanco cuando la opción está activa -->
+    <item android:color="@color/white" android:state_checked="true" />
+    <!-- Gris claro para los íconos no seleccionados -->
+    <item android:color="@color/nav_icon_inactive" />
+</selector>

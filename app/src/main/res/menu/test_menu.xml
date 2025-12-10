@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/platosFragment"
+        android:icon="@drawable/ic_home_24"
+        android:title="Home" />
+    <item
+        android:id="@+id/menuFragment"
+        android:icon="@drawable/ic_restaurant_menu_24"
+        android:title="Menú" />
+    <item
+        android:id="@+id/pedidosFragment"
+        android:icon="@drawable/ic_assignment_24"
+        android:title="Pedidos" />
+
+    <item
+        android:id="@+id/perfilFragment"
+        android:icon="@drawable/ic_person_24"
+        android:title="Perfil" />
+</menu>

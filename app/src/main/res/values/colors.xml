@@ -12,6 +12,7 @@
 
     <!-- 🌙 Colores modo oscuro -->
     <color name="nav_dark">#1B1B1B</color>
+    <color name="nav_background">#2F2F2F</color>
     <color name="background_dark">#121212</color>
     <color name="text_light">#E0E0E0</color>
 
