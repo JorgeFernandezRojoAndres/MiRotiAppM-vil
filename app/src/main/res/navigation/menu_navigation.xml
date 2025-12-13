@@ -2,22 +2,45 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/platosFragment">
+    app:startDestination="@id/bienvenidaFragment">
 
     <fragment
-        android:id="@+id/platosFragment"
-        android:name="com.jorge.mirotimobile.ui.platos.PlatosFragment"
-        android:label="Platos" />
+        android:id="@+id/bienvenidaFragment"
+        android:name="com.jorge.mirotimobile.ui.nav.BienvenidaFragment"
+        android:label="Bienvenida" />
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.jorge.mirotimobile.ui.nav.MenuFragment"
+        android:name="com.jorge.mirotimobile.ui.platos.MenuFragment"
         android:label="Menú" />
 
     <fragment
         android:id="@+id/pedidosFragment"
         android:name="com.jorge.mirotimobile.ui.pedidos.PedidosFragment"
-        android:label="Pedidos" />
+        android:label="Pedidos">
+
+        <action
+            android:id="@+id/action_pedidosFragment_to_detallePedidoFragment"
+            app:destination="@id/detallePedidoFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/detallePedidoFragment"
+        android:name="com.jorge.mirotimobile.ui.pedidos.DetallePedidoFragment"
+        android:label="Detalle del Pedido">
+
+        <argument
+            android:name="pedidoId"
+            app:argType="integer"
+            android:defaultValue="0" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/historialPedidosFragment"
+        android:name="com.jorge.mirotimobile.ui.pedidos.HistorialPedidosFragment"
+        android:label="Historial de pedidos" />
 
     <fragment
         android:id="@+id/trackingFragment"
@@ -27,5 +50,10 @@
     <fragment
         android:id="@+id/perfilFragment"
         android:name="com.jorge.mirotimobile.ui.perfil.PerfilFragment"
-        android:label="Perfil" />
+        android:label="Perfil">
+
+        <action
+            android:id="@+id/action_perfilFragment_to_historialPedidosFragment"
+            app:destination="@id/historialPedidosFragment" />
+    </fragment>
 </navigation>

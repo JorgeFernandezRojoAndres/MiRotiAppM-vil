@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.jorge.mirotimobile.model.PedidoDTO;
+
 /**
  * 📦 SessionManager — Manejo completo de sesión y persistencia local.
  * Administra token JWT, datos de usuario y credenciales seguras para login biométrico.
@@ -21,14 +24,18 @@ public class SessionManager {
     // 🔹 Claves adicionales para login con huella
     private static final String SAVED_EMAIL_KEY = "saved_email";
     private static final String SAVED_PASSWORD_KEY = "saved_password";
+    private static final String PENDING_PEDIDO_KEY = "pending_pedido";
+    private static final String PENDING_PEDIDO_FLAG_KEY = "pending_pedido_flag";
 
     private final SharedPreferences prefs;
+    private final Gson gson;
 
     // ======================================
     // 🔸 Constructor
     // ======================================
     public SessionManager(Context context) {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        gson = new Gson();
     }
 
     // ======================================
@@ -109,6 +116,47 @@ public class SessionManager {
         prefs.edit()
                 .remove(SAVED_EMAIL_KEY)
                 .remove(SAVED_PASSWORD_KEY)
+                .apply();
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void savePendingPedido(PedidoDTO pedido) {
+        if (pedido == null) {
+            clearPendingPedido();
+            return;
+        }
+        String json = gson.toJson(pedido);
+        prefs.edit()
+                .putString(PENDING_PEDIDO_KEY, json)
+                .apply();
+    }
+
+    public PedidoDTO getPendingPedido() {
+        String json = prefs.getString(PENDING_PEDIDO_KEY, null);
+        if (json == null) return null;
+        try {
+            return gson.fromJson(json, PedidoDTO.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void savePedidoPendienteFlag(boolean pending) {
+        prefs.edit()
+                .putBoolean(PENDING_PEDIDO_FLAG_KEY, pending)
+                .apply();
+    }
+
+    public boolean isPedidoPendientePersisted() {
+        return prefs.getBoolean(PENDING_PEDIDO_FLAG_KEY, false);
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void clearPendingPedido() {
+        prefs.edit()
+                .remove(PENDING_PEDIDO_KEY)
+                .remove(PENDING_PEDIDO_FLAG_KEY)
                 .apply();
     }
 }

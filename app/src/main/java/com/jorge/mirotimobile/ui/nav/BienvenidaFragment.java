@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.ui.platos;
+package com.jorge.mirotimobile.ui.nav;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,11 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.jorge.mirotimobile.databinding.FragmentPlatosBinding;
+import com.jorge.mirotimobile.databinding.FragmentBienvenidaBinding;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.PedidoResumen;
 import com.jorge.mirotimobile.model.Plato;
 import com.jorge.mirotimobile.ui.pedidos.PedidosRecientesAdapter;
+import com.jorge.mirotimobile.ui.platos.PlatosDestacadosAdapter;
+import com.jorge.mirotimobile.ui.platos.PlatosViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -24,24 +26,21 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 🍽️ PlatosFragment — Muestra la lista de platos disponibles.
- * No contiene lógica, validaciones ni condiciones.
- * Observa LiveData del ViewModel y actualiza la UI.
+ * Piso de bienvenida tras login del cliente.
  */
-public class PlatosFragment extends Fragment {
+public class BienvenidaFragment extends Fragment {
 
-    private FragmentPlatosBinding binding;
+    private FragmentBienvenidaBinding binding;
     private PlatosViewModel vm;
-    private PlatosAdapter adapter;
-    private PlatosDestacadosAdapter destacadosAdapter;
     private PedidosRecientesAdapter pedidosAdapter;
+    private PlatosDestacadosAdapter destacadosAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentPlatosBinding.inflate(inflater, container, false);
+        binding = FragmentBienvenidaBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -50,18 +49,9 @@ public class PlatosFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        vm = new ViewModelProvider(this).get(PlatosViewModel.class);
-
-        // Configurar saludo
-        configurarSaludo();
-
-        // Configurar RecyclerViews
-        adapter = new PlatosAdapter();
-        destacadosAdapter = new PlatosDestacadosAdapter();
+        vm = new ViewModelProvider(requireActivity()).get(PlatosViewModel.class);
         pedidosAdapter = new PedidosRecientesAdapter();
-
-        binding.recyclerPlatos.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.recyclerPlatos.setAdapter(adapter);
+        destacadosAdapter = new PlatosDestacadosAdapter();
 
         binding.recyclerDestacados.setLayoutManager(
                 new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -72,34 +62,22 @@ public class PlatosFragment extends Fragment {
         binding.recyclerPedidosRecientes.setAdapter(pedidosAdapter);
         pedidosAdapter.actualizarLista(obtenerPedidosDemo());
 
-        // Observa lista de platos → actualiza la vista
         vm.getPlatos().observe(getViewLifecycleOwner(), platos -> {
-            adapter.actualizarLista(platos);
-
-            // Mostrar todos los platos en destacados (scroll horizontal)
             List<Plato> destacados = (platos == null) ? Collections.emptyList() : platos;
             destacadosAdapter.actualizarLista(destacados);
             actualizarMetricas(platos);
         });
 
-        // Observa estado de carga → muestra u oculta el progress bar
         vm.getLoading().observe(getViewLifecycleOwner(),
                 visible -> binding.progressBar.setVisibility(visible ? View.VISIBLE : View.GONE));
 
-        // Observa errores → muestra u oculta el mensaje
         vm.getMensajeError().observe(getViewLifecycleOwner(), error -> {
             binding.txtError.setText(error);
             binding.txtError.setVisibility(error != null ? View.VISIBLE : View.GONE);
         });
 
-        // Inicia la carga (ViewModel maneja la lógica y llamadas Retrofit)
         vm.cargarPlatos();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        configurarSaludo();
     }
 
     private void configurarSaludo() {
@@ -113,30 +91,21 @@ public class PlatosFragment extends Fragment {
     }
 
     private void actualizarMetricas(List<Plato> lista) {
+        NumberFormat currency = NumberFormat.getCurrencyInstance(new Locale("es", "AR"));
         if (lista == null || lista.isEmpty()) {
             binding.metricTotalValue.setText("0");
-            binding.metricPromedioValue.setText("$0");
-            binding.metricTopValue.setText("$0");
+            binding.metricSaldoValue.setText(currency.format(0));
             return;
         }
 
-        double max = 0;
+        int total = lista.size();
         double sum = 0;
         for (Plato p : lista) {
-            double precio = p.getPrecioVenta();
-            sum += precio;
-            if (precio > max) {
-                max = precio;
-            }
+            sum += p.getPrecioVenta();
         }
 
-        int total = lista.size();
-        double promedio = sum / total;
-        NumberFormat currency = NumberFormat.getCurrencyInstance(new Locale("es", "AR"));
-
         binding.metricTotalValue.setText(String.valueOf(total));
-        binding.metricPromedioValue.setText(currency.format(promedio));
-        binding.metricTopValue.setText(currency.format(max));
+        binding.metricSaldoValue.setText(currency.format(sum));
     }
 
     private List<PedidoResumen> obtenerPedidosDemo() {
@@ -145,5 +114,11 @@ public class PlatosFragment extends Fragment {
         demo.add(new PedidoResumen("#1233", "2024-07-26", "En Proceso"));
         demo.add(new PedidoResumen("#1232", "2024-07-26", "Entregado"));
         return demo;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

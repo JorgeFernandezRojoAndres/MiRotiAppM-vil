@@ -2,13 +2,16 @@ package com.jorge.mirotimobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -16,10 +19,12 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.ui.login.LoginActivity;
+import com.jorge.mirotimobile.ui.pedidos.PedidosViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private SessionManager session;
+    private boolean tienePedidosActivos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,26 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
             NavigationUI.setupWithNavController(bottomNav, navController);
+
+            PedidosViewModel pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
+            pedidosViewModel.getPedidos().observe(this, pedidos -> {
+                tienePedidosActivos = pedidos != null && !pedidos.isEmpty();
+            });
+
+            bottomNav.setOnItemSelectedListener(item -> {
+                Log.d("NAV", "BottomNav tap: " + item.getItemId());
+                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                if (item.getItemId() == R.id.trackingFragment && !tienePedidosActivos) {
+                    Toast.makeText(this, "No tenés pedidos en seguimiento", Toast.LENGTH_SHORT).show();
+                }
+                // FIX: let NavigationUI drive navigation while still warning about tracking.
+                return handled;
+            });
+            bottomNav.setOnItemReselectedListener(item -> {
+                if (item.getItemId() == R.id.pedidosFragment) {
+                    navController.navigate(R.id.pedidosFragment);
+                }
+            });
         }
 
         session = new SessionManager(getApplicationContext());

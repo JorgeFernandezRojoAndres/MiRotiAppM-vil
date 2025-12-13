@@ -65,10 +65,7 @@ public class PlatosViewModel extends AndroidViewModel {
             return;
         }
 
-        // 🔐 Agregar prefijo Bearer al token JWT
-        String bearerToken = "Bearer " + token;
-
-        Call<List<Plato>> call = api.obtenerPlatos(bearerToken);
+        Call<List<Plato>> call = api.obtenerPlatos();
         call.enqueue(new Callback<List<Plato>>() {
             @Override
             public void onResponse(@NonNull Call<List<Plato>> call, @NonNull Response<List<Plato>> response) {

@@ -12,6 +12,8 @@ public class Usuario {
     private String email;
     private String contrasenia;
     private String rol;
+    private String direccion;
+    private String telefono;
 
     // 🔹 Constructor vacío (necesario para Retrofit/Gson)
     public Usuario() {
@@ -62,5 +64,21 @@ public class Usuario {
 
     public void setRol(String rol) {
         this.rol = rol;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 }

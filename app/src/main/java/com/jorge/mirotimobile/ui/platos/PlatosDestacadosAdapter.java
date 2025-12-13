@@ -1,22 +1,26 @@
 package com.jorge.mirotimobile.ui.platos;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jorge.mirotimobile.BuildConfig;
 import com.jorge.mirotimobile.databinding.ItemPlatoDestacadoBinding;
 import com.jorge.mirotimobile.model.Plato;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 /**
  * Adaptador horizontal para los platos destacados de la pantalla de inicio.
@@ -66,12 +70,14 @@ public class PlatosDestacadosAdapter extends RecyclerView.Adapter<PlatosDestacad
             binding.txtPrecioPlatoDestacado.setText(currencyFormat.format(plato.getPrecioVenta()));
 
             String url = makeAbsoluteUrl(plato.getImagenUrl());
-            if (url != null && !url.trim().isEmpty()) {
+            String safeUrl = encodeUrl(url);
+            Log.d("PlatosDestacados", "Carga imagen: " + safeUrl);
+            if (safeUrl != null && !safeUrl.trim().isEmpty()) {
                 binding.txtInicialPlato.setVisibility(android.view.View.GONE);
                 binding.imgPlatoDestacado.setVisibility(android.view.View.VISIBLE);
 
                 Glide.with(binding.getRoot().getContext())
-                        .load(url)
+                        .load(safeUrl)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .centerCrop()
                         .into(binding.imgPlatoDestacado);
@@ -100,6 +106,24 @@ public class PlatosDestacadosAdapter extends RecyclerView.Adapter<PlatosDestacad
                 trimmed = "/" + trimmed;
             }
             return base + trimmed;
+        }
+
+        private String encodeUrl(String rawUrl) {
+            if (rawUrl == null || rawUrl.trim().isEmpty()) return rawUrl;
+            try {
+                URL parsed = new URL(rawUrl);
+                URI uri = new URI(
+                        parsed.getProtocol(),
+                        parsed.getUserInfo(),
+                        parsed.getHost(),
+                        parsed.getPort(),
+                        parsed.getPath(),
+                        parsed.getQuery(),
+                        parsed.getRef());
+                return uri.toASCIIString();
+            } catch (MalformedURLException | URISyntaxException e) {
+                return rawUrl.replace(" ", "%20");
+            }
         }
     }
 }

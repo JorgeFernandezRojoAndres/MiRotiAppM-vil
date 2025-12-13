@@ -32,9 +32,6 @@ public class RetrofitClient {
 
     private static Retrofit retrofit = null;
 
-    // URL base fija (actualizada a HTTP porque el backend usa puerto 5000 sin HTTPS)
-    private static final String BASE_URL = "http://192.168.1.38:5000/api/";
-
     /**
      * Devuelve una instancia de Retrofit configurada.
      */
@@ -69,7 +66,7 @@ public class RetrofitClient {
                     });
 
             // Solo configuramos SSL relajado si el endpoint es HTTPS
-            if (BASE_URL.startsWith("https")) {
+            if (BuildConfig.BASE_URL.startsWith("https")) {
                 try {
                     TrustManager[] trustAllCerts = new TrustManager[]{
                             new X509TrustManager() {
@@ -105,7 +102,7 @@ public class RetrofitClient {
             OkHttpClient client = clientBuilder.build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(BuildConfig.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();

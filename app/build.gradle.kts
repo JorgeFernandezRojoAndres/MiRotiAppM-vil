@@ -1,8 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
 
 android {
+    val localProperties = Properties().apply {
+        rootProject.file("local.properties").takeIf { it.exists() }?.reader()?.use { load(it) }
+    }
+    val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.36"
+    val localBaseUrl = "\"http://$backendHost:5000/api/\""
+
     namespace = "com.jorge.mirotimobile"
     compileSdk = 36
 
@@ -19,7 +27,7 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         // ✅ URL base editable sin tocar código
-        buildConfigField("String", "BASE_URL", "\"http://192.168.1.37:5000/api/\"")
+        buildConfigField("String", "BASE_URL", localBaseUrl)
     }
 
 
@@ -37,18 +45,19 @@ android {
 
         debug {
             // 🔹 URL para entorno local
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.37:5000/api/\"")
+            buildConfigField("String", "BASE_URL", localBaseUrl)
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildFeatures {
         viewBinding = true   // ✅ Activa ViewBinding
         buildConfig = true   // ✅ Habilita BuildConfig
+        dataBinding = true   // ✅ Necesario para layouts `<layout>`
     }
 }
 
@@ -78,6 +87,7 @@ dependencies {
 
     // 🔹 Biometría (Huella digital / FaceID)
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
