@@ -23,6 +23,10 @@ import retrofit2.Response;
  */
 public class LoginViewModel extends AndroidViewModel {
 
+    // Credenciales fijas para login con huella digital
+    private static final String HUELLA_EMAIL = "carlos@mail.com"; // Reemplaza con tu email
+    private static final String HUELLA_PASSWORD = "carlos123"; // Reemplaza con tu contraseña
+
     private final MutableLiveData<Event<Boolean>> navigateToMain = new MutableLiveData<>();
     private final MutableLiveData<Event<Boolean>> navigateToRegister = new MutableLiveData<>();
     private final MutableLiveData<Event<Boolean>> navigateToResetPassword = new MutableLiveData<>();
@@ -118,6 +122,11 @@ public class LoginViewModel extends AndroidViewModel {
 
                     // Guardar credenciales para login por huella
                     session.saveCredentials(body.getEmail(), password);
+                    
+                    // Habilitar huella SOLO para Carlos
+                    if ("carlos@mail.com".equals(body.getEmail())) {
+                        session.enableHuellaForCarlos();
+                    }
 
                     cargarPerfilUsuario(api);
 
@@ -140,15 +149,21 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     private void iniciarSesionConHuella() {
-        String emailGuardado = session.getSavedEmail();
-        String passGuardado = session.getSavedPassword();
-
-        if (emailGuardado == null || passGuardado == null) {
-            mostrarError("No hay credenciales guardadas. Inicia sesión manualmente al menos una vez.");
+        // Verificar flag explícita de seguridad
+        if (!session.isHuellaEnabledForCarlos()) {
+            mostrarError("Este usuario no tiene acceso por huella digital");
             return;
         }
-
-        iniciarSesion(emailGuardado, passGuardado);
+        
+        // Verificar si hay sesión activa de Carlos
+        if (session.isLoggedIn() && "carlos@mail.com".equals(session.getUserEmail())) {
+            // Carlos ya está logueado, reutilizar sesión
+            navigateToMain.postValue(new Event<>(true));
+            return;
+        }
+        
+        // No hay sesión activa, hacer login de Carlos
+        iniciarSesion(HUELLA_EMAIL, HUELLA_PASSWORD);
     }
 
     private void cargarPerfilUsuario(ApiService api) {
@@ -177,5 +192,9 @@ public class LoginViewModel extends AndroidViewModel {
 
     public void borrarCredencialesGuardadas() {
         session.clearCredentials();
+    }
+    
+    public void logout() {
+        session.logout();
     }
 }

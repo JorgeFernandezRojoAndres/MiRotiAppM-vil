@@ -28,6 +28,7 @@ public class SessionManager {
     private static final String PENDING_PEDIDO_KEY = "pending_pedido";
     private static final String PENDING_PEDIDO_FLAG_KEY = "pending_pedido_flag";
     private static final String CADETE_EN_SERVICIO_KEY = "cadete_en_servicio";
+    private static final String HUELLA_ENABLED_FOR_CARLOS_KEY = "huella_enabled_for_carlos";
 
     private final SharedPreferences prefs;
     private final Gson gson;
@@ -95,6 +96,18 @@ public class SessionManager {
     public void clear() {
         prefs.edit().clear().apply();
     }
+    
+    @SuppressLint("ApplySharedPref")
+    public void logout() {
+        prefs.edit()
+                .remove(TOKEN_KEY)
+                .remove(USER_ID_KEY)
+                .remove(USER_EMAIL_KEY)
+                .remove(USER_ROLE_KEY)
+                .remove(USER_NAME_KEY)
+                .remove(HUELLA_ENABLED_FOR_CARLOS_KEY)
+                .apply();
+    }
 
     // ======================================
     // 🔸 Credenciales para login con huella
@@ -111,6 +124,17 @@ public class SessionManager {
                 .putString(SAVED_EMAIL_KEY, email)
                 .putString(SAVED_PASSWORD_KEY, password)
                 .apply();
+    }
+    
+    @SuppressLint("ApplySharedPref")
+    public void enableHuellaForCarlos() {
+        prefs.edit()
+                .putBoolean(HUELLA_ENABLED_FOR_CARLOS_KEY, true)
+                .apply();
+    }
+    
+    public boolean isHuellaEnabledForCarlos() {
+        return prefs.getBoolean(HUELLA_ENABLED_FOR_CARLOS_KEY, false);
     }
 
     public String getSavedEmail() {

@@ -76,7 +76,7 @@ public class PerfilFragment extends Fragment {
         viewModel.cargarPerfil();
         binding.btnCerrarSesion.setOnClickListener(v -> {
             SessionManager session = new SessionManager(requireContext());
-            session.clear();
+            session.logout();
             Intent intent = new Intent(requireContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
