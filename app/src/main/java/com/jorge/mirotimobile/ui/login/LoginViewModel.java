@@ -1,6 +1,7 @@
 package com.jorge.mirotimobile.ui.login;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,6 +12,7 @@ import com.jorge.mirotimobile.Retrofit.ApiService;
 import com.jorge.mirotimobile.Retrofit.RetrofitClient;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.Usuario;
+import com.jorge.mirotimobile.util.Event;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,8 +23,9 @@ import retrofit2.Response;
  */
 public class LoginViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<Void> navigateToMain = new MutableLiveData<>();
-    private final MutableLiveData<Void> navigateToRegister = new MutableLiveData<>();
+    private final MutableLiveData<Event<Boolean>> navigateToMain = new MutableLiveData<>();
+    private final MutableLiveData<Event<Boolean>> navigateToRegister = new MutableLiveData<>();
+    private final MutableLiveData<Event<Boolean>> navigateToResetPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showError = new MutableLiveData<>();
     private final MutableLiveData<String> mensajeError = new MutableLiveData<>();
@@ -34,12 +37,16 @@ public class LoginViewModel extends AndroidViewModel {
         session = new SessionManager(application.getApplicationContext());
     }
 
-    public LiveData<Void> getNavigateToMain() {
+    public LiveData<Event<Boolean>> getNavigateToMain() {
         return navigateToMain;
     }
 
-    public LiveData<Void> getNavigateToRegister() {
+    public LiveData<Event<Boolean>> getNavigateToRegister() {
         return navigateToRegister;
+    }
+
+    public LiveData<Event<Boolean>> getNavigateToResetPassword() {
+        return navigateToResetPassword;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -55,6 +62,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void onLoginClicked(String email, String password) {
+        Log.d("LOGIN_FLOW", "onLoginClicked: " + email);
         if (email.isEmpty() || password.isEmpty()) {
             mostrarError("Completa todos los campos");
             return;
@@ -67,11 +75,11 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void onForgotPasswordClicked() {
-        mostrarError("Función de recuperación de contraseña aún no disponible.");
+        navigateToResetPassword.postValue(new Event<>(true));
     }
 
     public void onRegisterClicked() {
-        navigateToRegister.postValue(null);
+        navigateToRegister.postValue(new Event<>(true));
     }
 
     private void iniciarSesion(String email, String password) {
@@ -84,7 +92,8 @@ public class LoginViewModel extends AndroidViewModel {
         Call<ApiService.TokenResponse> call = api.login(usuario);
         call.enqueue(new Callback<ApiService.TokenResponse>() {
             @Override
-            public void onResponse(Call<ApiService.TokenResponse> call, Response<ApiService.TokenResponse> response) {
+            public void onResponse(Call<ApiService.TokenResponse> call,
+                                   Response<ApiService.TokenResponse> response) {
                 loading.postValue(false);
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -110,9 +119,12 @@ public class LoginViewModel extends AndroidViewModel {
                     // Guardar credenciales para login por huella
                     session.saveCredentials(body.getEmail(), password);
 
+                    cargarPerfilUsuario(api);
+
                     mensajeError.postValue(null);
                     showError.postValue(false);
-                    navigateToMain.postValue(null);
+                    Log.d("LOGIN_FLOW", "Login successful, posting navigateToMain Event");
+                    navigateToMain.postValue(new Event<>(true));
                 } else {
                     mostrarError("Credenciales inválidas o usuario no encontrado");
                 }
@@ -121,6 +133,7 @@ public class LoginViewModel extends AndroidViewModel {
             @Override
             public void onFailure(Call<ApiService.TokenResponse> call, Throwable t) {
                 loading.postValue(false);
+                Log.d("LOGIN_FLOW", "Login failed: " + t.getMessage());
                 mostrarError("Error de conexión: " + t.getMessage());
             }
         });
@@ -136,6 +149,25 @@ public class LoginViewModel extends AndroidViewModel {
         }
 
         iniciarSesion(emailGuardado, passGuardado);
+    }
+
+    private void cargarPerfilUsuario(ApiService api) {
+        api.obtenerPerfil().enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Usuario perfil = response.body();
+                    if (perfil.getNombre() != null && !perfil.getNombre().isEmpty()) {
+                        session.saveUserName(perfil.getNombre());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                // No romper el flujo de login
+            }
+        });
     }
 
     private void mostrarError(String mensaje) {

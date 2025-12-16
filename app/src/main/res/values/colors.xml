@@ -25,5 +25,11 @@
     <color name="estado_proceso">#FF9800</color>
     <color name="estado_cancelado">#F44336</color>
     <color name="surface_dark">#1F1F1F</color>
+    <color name="cadete_state_espera">#424242</color>
+    <color name="cadete_state_activo">#1E88E5</color>
+    <color name="cadete_state_entregado">#4CAF50</color>
+    <color name="cadete_text_primary">#FFFFFF</color>
+    <color name="cadete_text_secondary">#E0E0E0</color>
+    <color name="estado_sin_entrega_bg">#363231</color>
 
 </resources>

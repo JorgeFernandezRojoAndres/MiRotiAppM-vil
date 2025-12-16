@@ -254,6 +254,17 @@
                     android:textAllCaps="false"
                     android:backgroundTint="@color/nav_icon_inactive"
                     android:textColor="@color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVolverSeguimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Volver a seguimiento"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    app:backgroundTint="@color/cadete_state_activo"
+                    android:textColor="@color/cadete_text_primary" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

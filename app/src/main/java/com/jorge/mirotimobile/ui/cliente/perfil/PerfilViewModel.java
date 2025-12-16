@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.ui.perfil;
+package com.jorge.mirotimobile.ui.cliente.perfil;
 
 import android.app.Application;
 

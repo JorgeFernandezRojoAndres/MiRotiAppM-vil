@@ -20,12 +20,14 @@ public class SessionManager {
     private static final String USER_ID_KEY = "user_id";
     private static final String USER_EMAIL_KEY = "user_email";
     private static final String USER_ROLE_KEY = "user_role";
+    private static final String USER_NAME_KEY = "user_name";
 
     // 🔹 Claves adicionales para login con huella
     private static final String SAVED_EMAIL_KEY = "saved_email";
     private static final String SAVED_PASSWORD_KEY = "saved_password";
     private static final String PENDING_PEDIDO_KEY = "pending_pedido";
     private static final String PENDING_PEDIDO_FLAG_KEY = "pending_pedido_flag";
+    private static final String CADETE_EN_SERVICIO_KEY = "cadete_en_servicio";
 
     private final SharedPreferences prefs;
     private final Gson gson;
@@ -72,6 +74,17 @@ public class SessionManager {
 
     public String getUserRole() {
         return prefs.getString(USER_ROLE_KEY, null);
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void saveUserName(String nombre) {
+        prefs.edit()
+                .putString(USER_NAME_KEY, nombre)
+                .apply();
+    }
+
+    public String getUserName() {
+        return prefs.getString(USER_NAME_KEY, null);
     }
 
     public boolean isLoggedIn() {
@@ -153,9 +166,20 @@ public class SessionManager {
     }
 
     @SuppressLint("ApplySharedPref")
+    public void setCadeteEnServicio(boolean enServicio) {
+        prefs.edit()
+                .putBoolean(CADETE_EN_SERVICIO_KEY, enServicio)
+                .apply();
+    }
+
+    public boolean isCadeteEnServicio() {
+        return prefs.getBoolean(CADETE_EN_SERVICIO_KEY, true);
+    }
+
+    @SuppressLint("ApplySharedPref")
     public void clearPendingPedido() {
         prefs.edit()
-                .remove(PENDING_PEDIDO_KEY)
+            .remove(PENDING_PEDIDO_KEY)
                 .remove(PENDING_PEDIDO_FLAG_KEY)
                 .apply();
     }

@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.ui.pedidos;
+package com.jorge.mirotimobile.ui.cliente.pedidos;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +38,7 @@ public class DetallePedidoFragment extends Fragment {
     private String ultimoError;
     private String textoConfirmarOriginal;
     private PedidoDTO pedidoActual;
+    private boolean modoCadete;
 
     @Nullable
     @Override
@@ -50,6 +51,11 @@ public class DetallePedidoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            modoCadete = args.getBoolean("modoCadete", false);
+        }
 
         adapter = new CarritoAdapter(this::actualizarResumen);
         binding.recyclerCarrito.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -106,6 +112,8 @@ public class DetallePedidoFragment extends Fragment {
                 vm.clearNavegarASeguimiento();
             }
         });
+
+        applyModoCadete();
 
         // FIX: skip a refresh here so the pedido en armado no se limpia al volver.
     }
@@ -196,6 +204,21 @@ public class DetallePedidoFragment extends Fragment {
                 binding.btnConfirmar.setText(textoConfirmarOriginal);
             }
         }
+    }
+
+    private void applyModoCadete() {
+        if (!modoCadete) {
+            binding.btnVolverSeguimiento.setVisibility(View.GONE);
+            return;
+        }
+
+        binding.btnConfirmar.setVisibility(View.GONE);
+        binding.btnCancelar.setVisibility(View.GONE);
+        binding.btnSeguirComprando.setVisibility(View.GONE);
+        binding.edtNotas.setEnabled(false);
+        binding.btnVolverSeguimiento.setVisibility(View.VISIBLE);
+        binding.btnVolverSeguimiento.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.trackingCadeteFragment));
     }
 
     @Override

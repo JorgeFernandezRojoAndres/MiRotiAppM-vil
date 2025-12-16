@@ -10,10 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.jorge.mirotimobile.databinding.FragmentRegisterBinding;
-import com.jorge.mirotimobile.utils.NavigationCommand;
-
 public class RegisterFragment extends Fragment {
 
     private FragmentRegisterBinding binding;
@@ -53,22 +52,8 @@ public class RegisterFragment extends Fragment {
         });
 
         registerViewModel.getNavigateToMain().observe(getViewLifecycleOwner(), unused -> {
-            // Navegar al MainActivity o Fragmento principal
-            // Como no tengo el NavigationCommand real a mano, uso una navegación segura básica
-            // Asumo que MainActivity maneja la navegación post-login
-            if (getActivity() != null) {
-                // Aquí podrías usar Navigation.findNavController(view).navigate(...) si usas Navigation Component
-                // O simplemente cerrar la actividad si es un flujo de login separado
-                // Por ahora, simularemos una navegación exitosa cerrando el fragmento o llamando a una acción
-                 Toast.makeText(getContext(), "Registro exitoso", Toast.LENGTH_SHORT).show();
-                 // Si estamos en un flujo de navegación:
-                 // Navigation.findNavController(getView()).navigate(R.id.action_register_to_main);
-                 // O si queremos usar el NavigationCommand que mencionaste (aunque no vi su implementación, asumo patrón)
-                 // ((MainActivity) getActivity()).navegarAlHome(); 
-                 
-                 // Opción genérica segura:
-                 getActivity().onBackPressed(); 
-            }
+            Toast.makeText(getContext(), "Registro exitoso", Toast.LENGTH_SHORT).show();
+            NavHostFragment.findNavController(this).popBackStack();
         });
     }
 

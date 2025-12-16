@@ -1,5 +1,6 @@
-package com.jorge.mirotimobile.ui.perfil;
+package com.jorge.mirotimobile.ui.cliente.perfil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,9 @@ import androidx.navigation.Navigation;
 
 import com.jorge.mirotimobile.R;
 import com.jorge.mirotimobile.databinding.FragmentPerfilBinding;
+import com.jorge.mirotimobile.localdata.SessionManager;
+import com.jorge.mirotimobile.ui.cliente.perfil.PerfilViewModel;
+import com.jorge.mirotimobile.ui.login.LoginActivity;
 
 /**
  * Fragment que muestra los datos del perfil del usuario autenticado.
@@ -70,6 +74,13 @@ public class PerfilFragment extends Fragment {
         binding.btnHistorial.setOnClickListener(irHistorial);
 
         viewModel.cargarPerfil();
+        binding.btnCerrarSesion.setOnClickListener(v -> {
+            SessionManager session = new SessionManager(requireContext());
+            session.clear();
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
         binding.imgAvatar.setImageResource(R.drawable.avatar_generico);
     }
 

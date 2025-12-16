@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.ui.pedidos;
+package com.jorge.mirotimobile.ui.cliente.pedidos;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

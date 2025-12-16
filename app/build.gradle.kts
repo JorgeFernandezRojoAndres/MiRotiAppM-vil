@@ -9,7 +9,7 @@ android {
         rootProject.file("local.properties").takeIf { it.exists() }?.reader()?.use { load(it) }
     }
     val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.36"
-    val localBaseUrl = "\"http://$backendHost:5000/api/\""
+    val localBaseUrl = "\"http://$backendHost:8080/api/\""
 
     namespace = "com.jorge.mirotimobile"
     compileSdk = 36
@@ -90,6 +90,9 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // 🔹 Test
     testImplementation(libs.junit)

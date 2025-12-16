@@ -1,9 +1,11 @@
 package com.jorge.mirotimobile.Retrofit;
 
 import com.jorge.mirotimobile.model.CrearPedidoRequest;
+import com.jorge.mirotimobile.model.GenericResponse;
 import com.jorge.mirotimobile.model.PedidoDTO;
 import com.jorge.mirotimobile.model.Plato;
 import com.jorge.mirotimobile.model.RegisterRequest;
+import com.jorge.mirotimobile.model.ResetPasswordRequest;
 import com.jorge.mirotimobile.model.Usuario;
 
 import java.util.List;
@@ -23,6 +25,9 @@ public interface ApiService {
     @POST("AuthApi/register")
     Call<TokenResponse> register(@Body RegisterRequest request);
 
+    @POST("AuthApi/reset-password")
+    Call<GenericResponse> resetPassword(@Body ResetPasswordRequest request);
+
     @GET("platosapi")
     Call<List<Plato>> obtenerPlatos();
 
@@ -31,6 +36,16 @@ public interface ApiService {
 
     @POST("pedidos")
     Call<PedidoDTO> crearPedido(@Body CrearPedidoRequest request);
+
+    // Cadete
+    @GET("pedidos/disponibles")
+    Call<List<PedidoDTO>> obtenerPedidosDisponibles();
+
+    @PUT("pedidos/{id}/tomar")
+    Call<PedidoDTO> tomarPedido(@Path("id") int id);
+
+    @PUT("pedidos/{id}/entregar")
+    Call<PedidoDTO> marcarPedidoEntregado(@Path("id") int id);
 
     @GET("usuarios/perfil")
     Call<Usuario> obtenerPerfil();

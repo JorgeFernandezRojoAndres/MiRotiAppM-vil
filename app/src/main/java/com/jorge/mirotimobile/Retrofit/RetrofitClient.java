@@ -31,6 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     private static Retrofit retrofit = null;
+    private static Retrofit retrofitNoAuth = null;
 
     /**
      * Devuelve una instancia de Retrofit configurada.
@@ -111,8 +112,80 @@ public class RetrofitClient {
         return retrofit;
     }
 
+    /**
+     * Devuelve una instancia de Retrofit sin token JWT (endpoints públicos como reset-password).
+     */
+    public static Retrofit getClientNoAuth() {
+        if (retrofitNoAuth == null) {
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .addInterceptor(logging)
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request original = chain.request();
+                            Request request = original.newBuilder()
+                                    .header("Accept", "application/json")
+                                    .build();
+                            return chain.proceed(request);
+                        }
+                    });
+
+            // Solo configuramos SSL relajado si el endpoint es HTTPS
+            if (BuildConfig.BASE_URL.startsWith("https")) {
+                try {
+                    TrustManager[] trustAllCerts = new TrustManager[]{
+                            new X509TrustManager() {
+                                @Override
+                                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+
+                                @Override
+                                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+
+                                @Override
+                                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                    return new java.security.cert.X509Certificate[]{};
+                                }
+                            }
+                    };
+
+                    SSLContext sslContext = SSLContext.getInstance("SSL");
+                    sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                    clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
+
+                    clientBuilder.hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            return true; // aceptar cualquier host (solo desarrollo)
+                        }
+                    });
+
+                } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            OkHttpClient client = clientBuilder.build();
+
+            retrofitNoAuth = new Retrofit.Builder()
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
+                    .build();
+        }
+
+        return retrofitNoAuth;
+    }
+
     
     public static void resetClient() {
         retrofit = null;
+        retrofitNoAuth = null;
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/entregasFragment"
+        android:icon="@drawable/ic_assignment_24"
+        android:title="Entregas" />
+    <item
+        android:id="@+id/trackingCadeteFragment"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="Seguimiento" />
+    <item
+        android:id="@+id/perfilFragment"
+        android:icon="@drawable/ic_person_24"
+        android:title="Perfil" />
+</menu>

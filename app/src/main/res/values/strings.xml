@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">MiRotiMobile</string>
+    <string name="google_maps_key">AIzaSyBaeLBuSlsO3PQqtVi-QK1fsMEQOC1jy_c</string>
+    <string name="marcar_entregado">Marcar como entregado</string>
+    <string name="llamar_cliente">Llamar al cliente</string>
+    <string name="mensaje_entrega_completada">Pedido marcado como entregado</string>
+    <string name="mensaje_sin_pedido_activo">No hay un pedido activo</string>
+    <string name="mensaje_sin_telefono">Teléfono del cliente no disponible</string>
+    <string name="mensaje_error_dialer">No se pudo abrir el marcador telefónico</string>
+    <string name="mensaje_contactar_cadete_sin_telefono">Teléfono del cadete no disponible</string>
 </resources>

@@ -24,7 +24,7 @@ import com.jorge.mirotimobile.databinding.FragmentMenuBinding;
 import com.jorge.mirotimobile.model.DetallePedidoInfoDTO;
 import com.jorge.mirotimobile.model.PedidoDTO;
 import com.jorge.mirotimobile.model.Plato;
-import com.jorge.mirotimobile.ui.pedidos.PedidosViewModel;
+import com.jorge.mirotimobile.ui.cliente.pedidos.PedidosViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;

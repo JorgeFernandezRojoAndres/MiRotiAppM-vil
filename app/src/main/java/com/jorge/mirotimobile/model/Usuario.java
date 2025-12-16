@@ -1,5 +1,7 @@
 package com.jorge.mirotimobile.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Modelo Usuario — representa tanto las credenciales de login
  * como los datos básicos del usuario devueltos por la API.
@@ -12,7 +14,9 @@ public class Usuario {
     private String email;
     private String contrasenia;
     private String rol;
+    @SerializedName(value = "Direccion", alternate = {"direccion"})
     private String direccion;
+    @SerializedName(value = "Telefono", alternate = {"telefono"})
     private String telefono;
 
     // 🔹 Constructor vacío (necesario para Retrofit/Gson)

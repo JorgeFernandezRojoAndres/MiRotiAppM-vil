@@ -1,6 +1,10 @@
-package com.jorge.mirotimobile.ui.seguimiento;
+package com.jorge.mirotimobile.ui.cliente.seguimiento;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jorge.mirotimobile.R;
 import com.jorge.mirotimobile.databinding.FragmentTrackingBinding;
 import com.jorge.mirotimobile.model.PedidoDTO;
-import com.jorge.mirotimobile.ui.pedidos.PedidosViewModel;
+import com.jorge.mirotimobile.ui.cliente.pedidos.PedidosViewModel;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +29,8 @@ import java.util.Locale;
 public class TrackingFragment extends Fragment {
 
     private FragmentTrackingBinding binding;
-    private PedidosViewModel vm;
+    private PedidosViewModel pedidosVm;
+    private PedidoDTO pedidoActivo;
 
     @Nullable
     @Override
@@ -39,9 +44,8 @@ public class TrackingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        vm = new ViewModelProvider(requireActivity()).get(PedidosViewModel.class);
-        vm.getPedidos().observe(getViewLifecycleOwner(), pedidos -> {
+        pedidosVm = new ViewModelProvider(requireActivity()).get(PedidosViewModel.class);
+        pedidosVm.getPedidos().observe(getViewLifecycleOwner(), pedidos -> {
             PedidoDTO activo = (pedidos == null || pedidos.isEmpty()) ? null : pedidos.get(0);
             if (activo == null) {
                 Snackbar.make(binding.getRoot(), "No hay pedido en seguimiento", Snackbar.LENGTH_SHORT).show();
@@ -51,9 +55,7 @@ public class TrackingFragment extends Fragment {
             mostrarTracking(activo);
         });
 
-        binding.btnContactarCadete.setOnClickListener(v ->
-                Snackbar.make(binding.getRoot(), "Contacto con cadete listo", Snackbar.LENGTH_SHORT).show());
-
+        binding.btnContactarCadete.setOnClickListener(v -> contactarCadete());
         binding.btnVerDetalles.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigate(R.id.detallePedidoFragment));
     }
@@ -76,6 +78,33 @@ public class TrackingFragment extends Fragment {
         String llegada = LocalDateTime.now().plusMinutes(30)
                 .format(DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault()));
         binding.txtArrivalTime.setText("Llegada estimada: " + llegada);
+        binding.lytEstadoAcciones.setVisibility(View.VISIBLE);
+        binding.btnMarcarEntregado.setVisibility(View.VISIBLE);
+        String cadeteTelefono = pedido.getCadeteTelefono();
+        binding.txtCadetePhone.setText(cadeteTelefono != null && !cadeteTelefono.trim().isEmpty()
+                ? "Tel: " + cadeteTelefono
+                : "Tel: -");
+        binding.txtCadeteName.setText("Cadete: " + (pedido.getCadete() != null ? pedido.getCadete() : "Sin cadete"));
+        pedidoActivo = pedido;
+        Log.d("TRACKING", "PedidosViewModel entrega dto: cadeteTelefono=" + cadeteTelefono);
+    }
+
+    private void contactarCadete() {
+        if (pedidoActivo == null) {
+            Snackbar.make(binding.getRoot(), R.string.mensaje_sin_pedido_activo, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        String telefono = pedidoActivo.getCadeteTelefono();
+        if (telefono == null || telefono.trim().isEmpty()) {
+            Snackbar.make(binding.getRoot(), R.string.mensaje_contactar_cadete_sin_telefono, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + telefono.trim()));
+        try {
+            startActivity(dialIntent);
+        } catch (ActivityNotFoundException ex) {
+            Snackbar.make(binding.getRoot(), R.string.mensaje_error_dialer, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private String formatearFecha(String isoDateTime) {

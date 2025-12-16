@@ -15,7 +15,7 @@ import com.jorge.mirotimobile.databinding.FragmentBienvenidaBinding;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.PedidoResumen;
 import com.jorge.mirotimobile.model.Plato;
-import com.jorge.mirotimobile.ui.pedidos.PedidosRecientesAdapter;
+import com.jorge.mirotimobile.ui.cliente.pedidos.PedidosRecientesAdapter;
 import com.jorge.mirotimobile.ui.platos.PlatosDestacadosAdapter;
 import com.jorge.mirotimobile.ui.platos.PlatosViewModel;
 

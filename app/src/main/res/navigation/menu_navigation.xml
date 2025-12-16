@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/pedidosFragment"
-        android:name="com.jorge.mirotimobile.ui.pedidos.PedidosFragment"
+        android:name="com.jorge.mirotimobile.ui.cliente.pedidos.PedidosFragment"
         android:label="Pedidos">
 
         <action
@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/detallePedidoFragment"
-        android:name="com.jorge.mirotimobile.ui.pedidos.DetallePedidoFragment"
+        android:name="com.jorge.mirotimobile.ui.cliente.pedidos.DetallePedidoFragment"
         android:label="Detalle del Pedido">
 
         <argument
@@ -35,21 +35,70 @@
             app:argType="integer"
             android:defaultValue="0" />
 
+        <argument
+            android:name="modoCadete"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
     </fragment>
 
     <fragment
         android:id="@+id/historialPedidosFragment"
-        android:name="com.jorge.mirotimobile.ui.pedidos.HistorialPedidosFragment"
+        android:name="com.jorge.mirotimobile.ui.cliente.pedidos.HistorialPedidosFragment"
         android:label="Historial de pedidos" />
 
     <fragment
         android:id="@+id/trackingFragment"
-        android:name="com.jorge.mirotimobile.ui.seguimiento.TrackingFragment"
+        android:name="com.jorge.mirotimobile.ui.cliente.seguimiento.TrackingFragment"
         android:label="Seguimiento" />
 
     <fragment
+        android:id="@+id/trackingCadeteFragment"
+        android:name="com.jorge.mirotimobile.ui.cadete.seguimiento.TrackingCadeteFragment"
+        android:label="Seguimiento Cadete">
+
+        <argument
+            android:name="detalleMode"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <argument
+            android:name="pedidoId"
+            app:argType="integer"
+            android:defaultValue="0" />
+
+        <action
+            android:id="@+id/action_trackingCadeteFragment_to_detallePedidoFragment"
+            app:destination="@id/detallePedidoFragment" />
+
+        <action
+            android:id="@+id/action_trackingCadeteFragment_to_mapaEntregaFragment"
+            app:destination="@id/mapaEntregaFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapaEntregaFragment"
+        android:name="com.jorge.mirotimobile.ui.cadete.seguimiento.MapaEntregaFragment"
+        android:label="Mapa">
+
+        <argument
+            android:name="direccionCliente"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/entregasFragment"
+        android:name="com.jorge.mirotimobile.ui.cadete.entregas.EntregasFragment"
+        android:label="Entregas" />
+
+    <action
+        android:id="@+id/action_entregasFragment_to_trackingCadeteFragment"
+        app:destination="@id/trackingCadeteFragment" />
+
+    <fragment
         android:id="@+id/perfilFragment"
-        android:name="com.jorge.mirotimobile.ui.perfil.PerfilFragment"
+        android:name="com.jorge.mirotimobile.ui.cliente.perfil.PerfilFragment"
         android:label="Perfil">
 
         <action
