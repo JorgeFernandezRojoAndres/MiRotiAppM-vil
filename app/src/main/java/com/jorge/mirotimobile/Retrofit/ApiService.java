@@ -47,6 +47,9 @@ public interface ApiService {
     @PUT("pedidos/{id}/entregar")
     Call<PedidoDTO> marcarPedidoEntregado(@Path("id") int id);
 
+    @PUT("pedidos/{id}/pagar")
+    Call<PedidoDTO> procesarPago(@Path("id") int id);
+
     @GET("usuarios/perfil")
     Call<Usuario> obtenerPerfil();
 

@@ -47,9 +47,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     app:cardUseCompatPadding="false"
-                    app:cardCornerRadius="0dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/background_dark">
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/background_dark"
+                    app:strokeColor="@color/miroti_orange"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -63,19 +65,30 @@
                             android:orientation="horizontal"
                             android:gravity="center_vertical">
 
-                            <TextView
-                                android:id="@+id/txtPedidoNumero"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Pedido #1234"
-                                android:textColor="@color/white"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                            <View
+                            <LinearLayout
                                 android:layout_width="0dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="1" />
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txtPedidoNumero"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pedido #1234"
+                                    android:textColor="@color/white"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/txtPedidoFecha"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="06/11/2025"
+                                    android:textColor="@color/text_light"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipEstado"
@@ -88,15 +101,6 @@
                                 android:checkable="false"
                                 app:chipCornerRadius="50dp" />
                         </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/txtPedidoFecha"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="06/11/2025"
-                            android:textColor="@color/text_light"
-                            android:textSize="14sp" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -115,17 +119,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSeguirComprando"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Seguir comprando"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white" />
 
                 <EditText
                     android:id="@+id/edtNotas"
@@ -149,8 +142,8 @@
                     app:cardCornerRadius="12dp"
                     app:cardElevation="4dp"
                     app:cardBackgroundColor="@color/background_dark"
-                    app:strokeColor="@color/nav_icon_inactive"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="@color/miroti_orange"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -265,6 +258,7 @@
                     android:visibility="gone"
                     app:backgroundTint="@color/cadete_state_activo"
                     android:textColor="@color/cadete_text_primary" />
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

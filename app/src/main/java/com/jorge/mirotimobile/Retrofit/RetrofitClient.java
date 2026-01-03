@@ -39,7 +39,12 @@ public class RetrofitClient {
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
 
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    android.util.Log.d("API_LOG", message);
+                }
+            });
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
@@ -118,7 +123,12 @@ public class RetrofitClient {
     public static Retrofit getClientNoAuth() {
         if (retrofitNoAuth == null) {
 
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    android.util.Log.d("API_LOG", message);
+                }
+            });
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()

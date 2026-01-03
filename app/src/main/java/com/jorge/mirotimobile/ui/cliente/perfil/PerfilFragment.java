@@ -49,22 +49,22 @@ public class PerfilFragment extends Fragment {
             return insets;
         });
 
-        viewModel.getNombreLiveData().observe(getViewLifecycleOwner(),
-                nombre -> binding.txtNombre.setText(nombre != null ? nombre : ""));
-        viewModel.getEmailLiveData().observe(getViewLifecycleOwner(),
-                email -> binding.txtEmail.setText(email != null ? email : ""));
-        viewModel.getDireccionLiveData().observe(getViewLifecycleOwner(),
-                direccion -> binding.txtDireccion.setText(direccion != null ? direccion : ""));
-        viewModel.getTelefonoLiveData().observe(getViewLifecycleOwner(),
-                telefono -> binding.txtTelefono.setText(telefono != null ? telefono : ""));
-        viewModel.getRolLiveData().observe(getViewLifecycleOwner(),
-                rol -> binding.txtRol.setText(rol != null ? rol : ""));
+        // Observar textos formateados (sin condicionales)
+        viewModel.getNombreFormateado().observe(getViewLifecycleOwner(), binding.txtNombre::setText);
+        viewModel.getEmailFormateado().observe(getViewLifecycleOwner(), binding.txtEmail::setText);
+        viewModel.getDireccionFormateada().observe(getViewLifecycleOwner(), binding.txtDireccion::setText);
+        viewModel.getTelefonoFormateado().observe(getViewLifecycleOwner(), binding.txtTelefono::setText);
+        viewModel.getRolFormateado().observe(getViewLifecycleOwner(), binding.txtRol::setText);
 
         viewModel.getLoadingLiveData().observe(getViewLifecycleOwner(), loading ->
                 binding.progressPerfil.setVisibility(Boolean.TRUE.equals(loading) ? View.VISIBLE : View.GONE));
 
-        viewModel.getErrorLiveData().observe(getViewLifecycleOwner(), error -> {
-            // opcional: podríamos mostrar un mensaje si la UI lo requiere
+        // Observar evento de logout
+        viewModel.getEventoLogout().observe(getViewLifecycleOwner(), event -> {
+            Boolean shouldLogout = event.getContentIfNotHandled();
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
 
         View.OnClickListener irHistorial = v ->
@@ -74,13 +74,7 @@ public class PerfilFragment extends Fragment {
         binding.btnHistorial.setOnClickListener(irHistorial);
 
         viewModel.cargarPerfil();
-        binding.btnCerrarSesion.setOnClickListener(v -> {
-            SessionManager session = new SessionManager(requireContext());
-            session.logout();
-            Intent intent = new Intent(requireContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        binding.btnCerrarSesion.setOnClickListener(v -> viewModel.cerrarSesion());
         binding.imgAvatar.setImageResource(R.drawable.avatar_generico);
     }
 

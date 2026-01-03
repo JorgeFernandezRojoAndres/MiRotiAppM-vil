@@ -52,6 +52,10 @@
         android:name="com.jorge.mirotimobile.ui.cliente.seguimiento.TrackingFragment"
         android:label="Seguimiento" />
 
+    <action
+        android:id="@+id/action_trackingFragment_to_mapaEntregaFragment"
+        app:destination="@id/mapaEntregaFragment" />
+
     <fragment
         android:id="@+id/trackingCadeteFragment"
         android:name="com.jorge.mirotimobile.ui.cadete.seguimiento.TrackingCadeteFragment"

@@ -5,12 +5,11 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="12dp"
     android:layout_marginBottom="12dp"
-    app:strokeColor="@color/nav_icon_inactive"
-    app:strokeWidth="1dp"
+    app:strokeColor="@color/miroti_orange"
+    app:strokeWidth="2dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="6dp"
-    android:backgroundTint="#1B1B1B"
-    app:cardUseCompatPadding="true">
+    android:backgroundTint="#1B1B1B">
 
     <LinearLayout
         android:orientation="vertical"
@@ -45,6 +44,25 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/txtPedidoCadete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cadete: Sin asignar"
+            android:textColor="@color/text_light"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/txtPedidoTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total: $0,00"
+            android:textColor="@color/miroti_orange"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

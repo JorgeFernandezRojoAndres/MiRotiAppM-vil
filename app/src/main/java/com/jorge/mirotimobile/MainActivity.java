@@ -27,8 +27,7 @@ import com.jorge.mirotimobile.ui.cliente.pedidos.PedidosViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SessionManager session;
-    private boolean tienePedidosActivos;
+    private MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,71 +43,67 @@ public class MainActivity extends AppCompatActivity {
         applySystemBarInsets();
         Log.d("MAIN_FLOW", "applySystemBarInsets DONE");
 
-        session = new SessionManager(getApplicationContext());
-        Log.d("MAIN_FLOW", "SessionManager created");
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        
+        // Observar ViewModel
+        observarViewModel();
+        
+        // Configurar UI
+        configurarUI();
+        
+        Log.d("MAIN_FLOW", "MainActivity onCreate COMPLETE");
+    }
+    
+    private void observarViewModel() {
+        // Observar redirección a login
+        mainViewModel.getEventoRedirectLogin().observe(this, event -> {
+            Boolean shouldRedirect = event.getContentIfNotHandled();
+            redirectToLogin();
+        });
+        
+        // Observar mensajes toast
+        mainViewModel.getMensajeToast().observe(this, mensaje -> {
+            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+        });
+    }
+    
+    private void configurarUI() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.BLACK));
         bottomNav.setItemTextColor(ColorStateList.valueOf(Color.BLACK));
         
-        Log.d("MAIN_FLOW", "Getting NavHostFragment");
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            Log.d("MAIN_FLOW", "NavHostFragment found");
-            NavController navController = navHostFragment.getNavController();
-            Log.d("MAIN_FLOW", "NavController obtained");
-            NavigationUI.setupWithNavController(bottomNav, navController);
-            Log.d("MAIN_FLOW", "NavigationUI setup DONE");
-            String role = session.getUserRole();
-            Log.d("MAIN_FLOW", "User role: " + role);
-            if ("Cadete".equalsIgnoreCase(role)) {
-                Log.d("MAIN_FLOW", "Setting up Cadete menu");
-                bottomNav.getMenu().clear();
-                bottomNav.inflateMenu(R.menu.menu_cadete);
-                Log.d("MAIN_FLOW", "Navigating to entregasFragment");
-                navController.navigate(R.id.entregasFragment);
-                Log.d("MAIN_FLOW", "Navigation to entregasFragment DONE");
-            }
-            bottomNav.setOnItemSelectedListener(item -> {
-                if (item.getItemId() == R.id.entregasFragment) {
-                    NavOptions options = new NavOptions.Builder()
-                            .setPopUpTo(R.id.entregasFragment, true)
-                            .setLaunchSingleTop(true)
-                            .build();
-                    navController.navigate(R.id.entregasFragment, null, options);
-                    return true;
-                }
-                return NavigationUI.onNavDestinationSelected(item, navController);
-            });
+        NavController navController = navHostFragment.getNavController();
+        NavigationUI.setupWithNavController(bottomNav, navController);
+        
+        // Observar configuración del menú
+        mainViewModel.getEventoConfigurarMenu().observe(this, event -> {
+            Integer menuRes = event.getContentIfNotHandled();
+            bottomNav.getMenu().clear();
+            bottomNav.inflateMenu(menuRes);
+        });
+        
+        // Observar eventos de navegación
+        mainViewModel.getEventoNavegacion().observe(this, event -> {
+            Integer destinationId = event.getContentIfNotHandled();
+            NavOptions options = new NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .build();
+            navController.navigate(destinationId, null, options);
+        });
+        
+        bottomNav.setOnItemSelectedListener(item -> {
+            mainViewModel.onMenuItemSelected(item.getItemId());
+            return true;
+        });
 
-            Log.d("MAIN_FLOW", "Creating PedidosViewModel");
-            PedidosViewModel pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
-            Log.d("MAIN_FLOW", "PedidosViewModel created, setting up observer");
-            pedidosViewModel.getPedidos().observe(this, pedidos -> {
-                Log.d("MAIN_FLOW", "PedidosViewModel observer triggered");
-                tienePedidosActivos = pedidos != null && !pedidos.isEmpty();
-            });
-            Log.d("MAIN_FLOW", "PedidosViewModel observer setup DONE");
+        PedidosViewModel pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
+        pedidosViewModel.getPedidos().observe(this, mainViewModel::onPedidosChanged);
 
-            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-                if (destination.getId() == R.id.trackingFragment && !tienePedidosActivos) {
-                    Toast.makeText(this, "No tenés pedidos en seguimiento", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        Log.d("MAIN_FLOW", "Checking token");
-        String token = session.getToken();
-
-        if (token == null || token.isEmpty()) {
-            Log.d("MAIN_FLOW", "No token, redirecting to login");
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return;
-        }
-        Log.d("MAIN_FLOW", "MainActivity onCreate COMPLETE");
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            mainViewModel.onNavigateToTracking();
+        });
     }
 
     private void applySystemBarInsets() {
@@ -155,7 +150,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout() {
-        session.logout();
+        mainViewModel.logout();
+    }
+    
+    private void redirectToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

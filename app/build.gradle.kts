@@ -8,7 +8,7 @@ android {
     val localProperties = Properties().apply {
         rootProject.file("local.properties").takeIf { it.exists() }?.reader()?.use { load(it) }
     }
-    val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.36"
+    val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.37"
     val localBaseUrl = "\"http://$backendHost:8080/api/\""
 
     namespace = "com.jorge.mirotimobile"
@@ -50,8 +50,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -80,10 +80,13 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
-    // 🔹 Lifecycle (ViewModel + LiveData)
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-runtime:2.8.3")
+    // 🔹 Lifecycle (ViewModel + LiveData) – AndroidViewModel comes from lifecycle-viewmodel
+    val lifecycleVersion = "2.9.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 
     // 🔹 Biometría (Huella digital / FaceID)
     implementation("androidx.biometric:biometric:1.2.0-alpha05")

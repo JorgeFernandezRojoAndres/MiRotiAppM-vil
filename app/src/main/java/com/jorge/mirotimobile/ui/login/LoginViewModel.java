@@ -33,6 +33,8 @@ public class LoginViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showError = new MutableLiveData<>();
     private final MutableLiveData<String> mensajeError = new MutableLiveData<>();
+    private final MutableLiveData<Integer> errorVisibility = new MutableLiveData<>();
+    private final MutableLiveData<Integer> progressVisibility = new MutableLiveData<>();
 
     private final SessionManager session;
 
@@ -64,6 +66,14 @@ public class LoginViewModel extends AndroidViewModel {
     public LiveData<String> getMensajeError() {
         return mensajeError;
     }
+    
+    public LiveData<Integer> getErrorVisibility() {
+        return errorVisibility;
+    }
+    
+    public LiveData<Integer> getProgressVisibility() {
+        return progressVisibility;
+    }
 
     public void onLoginClicked(String email, String password) {
         Log.d("LOGIN_FLOW", "onLoginClicked: " + email);
@@ -89,6 +99,7 @@ public class LoginViewModel extends AndroidViewModel {
     private void iniciarSesion(String email, String password) {
         loading.postValue(true);
         showError.postValue(false);
+        actualizarVisibilidad();
 
         ApiService api = RetrofitClient.getClient(getApplication()).create(ApiService.class);
         Usuario usuario = new Usuario(email, password);
@@ -99,6 +110,7 @@ public class LoginViewModel extends AndroidViewModel {
             public void onResponse(Call<ApiService.TokenResponse> call,
                                    Response<ApiService.TokenResponse> response) {
                 loading.postValue(false);
+                actualizarVisibilidad();
 
                 if (response.isSuccessful() && response.body() != null) {
                     ApiService.TokenResponse body = response.body();
@@ -142,6 +154,7 @@ public class LoginViewModel extends AndroidViewModel {
             @Override
             public void onFailure(Call<ApiService.TokenResponse> call, Throwable t) {
                 loading.postValue(false);
+                actualizarVisibilidad();
                 Log.d("LOGIN_FLOW", "Login failed: " + t.getMessage());
                 mostrarError("Error de conexión: " + t.getMessage());
             }
@@ -149,20 +162,24 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     private void iniciarSesionConHuella() {
+        Log.d("HUELLA_DEBUG", "Iniciando sesión con huella");
+        Log.d("HUELLA_DEBUG", "Flag huella habilitada: " + session.isHuellaEnabledForCarlos());
+        
         // Verificar flag explícita de seguridad
         if (!session.isHuellaEnabledForCarlos()) {
-            mostrarError("Este usuario no tiene acceso por huella digital");
-            return;
+            Log.d("HUELLA_DEBUG", "Flag no habilitada, habilitando para Carlos");
+            // Si no está habilitada, habilitarla para Carlos
+            session.enableHuellaForCarlos();
         }
         
         // Verificar si hay sesión activa de Carlos
         if (session.isLoggedIn() && "carlos@mail.com".equals(session.getUserEmail())) {
-            // Carlos ya está logueado, reutilizar sesión
+            Log.d("HUELLA_DEBUG", "Sesión activa de Carlos, navegando");
             navigateToMain.postValue(new Event<>(true));
             return;
         }
         
-        // No hay sesión activa, hacer login de Carlos
+        Log.d("HUELLA_DEBUG", "Haciendo login con credenciales de Carlos");
         iniciarSesion(HUELLA_EMAIL, HUELLA_PASSWORD);
     }
 
@@ -188,6 +205,20 @@ public class LoginViewModel extends AndroidViewModel {
     private void mostrarError(String mensaje) {
         mensajeError.postValue(mensaje);
         showError.postValue(true);
+        actualizarVisibilidad();
+    }
+    
+    private void actualizarVisibilidad() {
+        Boolean isLoading = loading.getValue();
+        Boolean hasError = showError.getValue();
+        
+        // Actualizar visibilidad de progress
+        progressVisibility.postValue(Boolean.TRUE.equals(isLoading) ? 
+            android.view.View.VISIBLE : android.view.View.GONE);
+            
+        // Actualizar visibilidad de error
+        errorVisibility.postValue(Boolean.TRUE.equals(hasError) ? 
+            android.view.View.VISIBLE : android.view.View.GONE);
     }
 
     public void borrarCredencialesGuardadas() {

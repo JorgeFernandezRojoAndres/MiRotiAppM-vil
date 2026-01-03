@@ -65,10 +65,6 @@ public class SessionManager {
                 .apply();
     }
 
-    public int getUserId() {
-        return prefs.getInt(USER_ID_KEY, -1);
-    }
-
     public String getUserEmail() {
         return prefs.getString(USER_EMAIL_KEY, null);
     }
@@ -93,11 +89,6 @@ public class SessionManager {
     }
 
     @SuppressLint("ApplySharedPref")
-    public void clear() {
-        prefs.edit().clear().apply();
-    }
-    
-    @SuppressLint("ApplySharedPref")
     public void logout() {
         prefs.edit()
                 .remove(TOKEN_KEY)
@@ -105,7 +96,6 @@ public class SessionManager {
                 .remove(USER_EMAIL_KEY)
                 .remove(USER_ROLE_KEY)
                 .remove(USER_NAME_KEY)
-                .remove(HUELLA_ENABLED_FOR_CARLOS_KEY)
                 .apply();
     }
 
@@ -135,14 +125,6 @@ public class SessionManager {
     
     public boolean isHuellaEnabledForCarlos() {
         return prefs.getBoolean(HUELLA_ENABLED_FOR_CARLOS_KEY, false);
-    }
-
-    public String getSavedEmail() {
-        return prefs.getString(SAVED_EMAIL_KEY, null);
-    }
-
-    public String getSavedPassword() {
-        return prefs.getString(SAVED_PASSWORD_KEY, null);
     }
 
     /**

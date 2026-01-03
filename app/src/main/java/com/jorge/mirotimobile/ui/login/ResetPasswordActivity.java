@@ -21,18 +21,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         vm = new ViewModelProvider(this).get(ResetPasswordViewModel.class);
 
-        vm.getLoading().observe(this,
-                loading -> binding.progress.setVisibility(loading ? android.view.View.VISIBLE : android.view.View.GONE));
-
-        vm.getMensajeError().observe(this, msg -> {
-            binding.txtError.setText(msg);
-            binding.txtError.setVisibility(msg == null || msg.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE);
-        });
-
-        vm.getMensajeExito().observe(this, msg -> {
-            binding.txtSuccess.setText(msg);
-            binding.txtSuccess.setVisibility(msg == null || msg.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE);
-        });
+        // Observar visibilidad directamente
+        vm.getProgressVisibility().observe(this, binding.progress::setVisibility);
+        vm.getErrorVisibility().observe(this, binding.txtError::setVisibility);
+        vm.getSuccessVisibility().observe(this, binding.txtSuccess::setVisibility);
+        
+        // Observar textos directamente
+        vm.getErrorText().observe(this, binding.txtError::setText);
+        vm.getSuccessText().observe(this, binding.txtSuccess::setText);
 
         vm.getNavigateToLogin().observe(this, unused ->
                 binding.getRoot().postDelayed(this::volverAlLogin, 800));

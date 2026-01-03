@@ -6,7 +6,7 @@ import com.jorge.mirotimobile.R;
 
 public enum EstadoPedido {
 
-    PENDIENTE("Pendiente", R.color.nav_icon_inactive),
+    PENDIENTE("Pendiente", R.color.estado_pendiente),
     EN_PREPARACION("En preparación", R.color.estado_proceso),
     EN_CAMINO("En camino", R.color.estado_proceso),
     COMPLETADO("Completado", R.color.estado_entregado),

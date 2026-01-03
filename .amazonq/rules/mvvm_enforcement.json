@@ -1,0 +1,81 @@
+{
+  "rules": [
+    {
+      "id": "no-conditionals-in-views",
+      "severity": "error",
+      "message": "No conditional statements allowed in Fragments/Activities. Move logic to ViewModel.",
+      "pattern": "\\b(if|else|switch|case|try|catch|throw)\\b",
+      "fileTypes": ["Fragment.java", "Activity.java"],
+      "description": "Fragments and Activities must not contain if/else, try/catch, or throw statements"
+    },
+    {
+      "id": "viewmodel-must-extend-android",
+      "severity": "error", 
+      "message": "ViewModels must extend AndroidViewModel for context access",
+      "pattern": "class.*ViewModel.*extends ViewModel",
+      "fileTypes": ["ViewModel.java"],
+      "description": "All ViewModels must extend AndroidViewModel instead of ViewModel"
+    },
+    {
+      "id": "no-findviewbyid",
+      "severity": "error",
+      "message": "Use ViewBinding instead of findViewById",
+      "pattern": "findViewById\\s*\\(",
+      "fileTypes": ["Fragment.java", "Activity.java"],
+      "description": "ViewBinding is required, findViewById is forbidden"
+    },
+    {
+      "id": "no-context-passing",
+      "severity": "error",
+      "message": "Do not pass Context to ViewModel. Use getApplication() instead",
+      "pattern": "viewModel\\.[a-zA-Z]*\\(.*[Cc]ontext.*\\)",
+      "fileTypes": ["Fragment.java", "Activity.java"],
+      "description": "Context must not be passed from UI to ViewModel"
+    },
+    {
+      "id": "viewmodel-no-return-values",
+      "severity": "error",
+      "message": "ViewModel methods must not return values. Use MutableLiveData instead",
+      "pattern": "public\\s+(?!void|LiveData|MutableLiveData)\\w+\\s+\\w+\\s*\\(",
+      "fileTypes": ["ViewModel.java"],
+      "description": "ViewModel methods should return void and update LiveData"
+    },
+    {
+      "id": "private-methods-in-viewmodel",
+      "severity": "warning",
+      "message": "Internal ViewModel methods should be private",
+      "pattern": "public\\s+void\\s+(validate|process|handle|execute|perform)\\w*\\s*\\(",
+      "fileTypes": ["ViewModel.java"],
+      "description": "Helper methods in ViewModel should be private"
+    }
+  ],
+  "enforcements": {
+    "fragments": {
+      "required_patterns": [
+        "ViewBinding.*binding",
+        "observe\\(.*LiveData",
+        "viewModel\\."
+      ],
+      "forbidden_patterns": [
+        "findViewById",
+        "if\\s*\\(",
+        "try\\s*\\{",
+        "catch\\s*\\(",
+        "new.*Call<",
+        "retrofit\\."
+      ]
+    },
+    "viewmodels": {
+      "required_patterns": [
+        "extends AndroidViewModel",
+        "MutableLiveData<",
+        "getApplication\\(\\)"
+      ],
+      "forbidden_patterns": [
+        "extends ViewModel[^A]",
+        "return (?!void|LiveData|MutableLiveData)",
+        "Context.*context"
+      ]
+    }
+  }
+}

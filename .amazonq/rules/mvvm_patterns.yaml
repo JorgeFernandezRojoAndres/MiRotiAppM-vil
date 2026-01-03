@@ -1,0 +1,94 @@
+mvvm_architecture_rules:
+  
+  # Rule 1: No Logic in UI Components
+  no_ui_logic:
+    severity: error
+    applies_to: ["*Fragment.java", "*Activity.java"]
+    forbidden:
+      - "if\\s*\\("
+      - "else\\s*\\{"
+      - "try\\s*\\{"
+      - "catch\\s*\\("
+      - "throw\\s+"
+      - "switch\\s*\\("
+    message: "Move all logic to ViewModel. UI components should only observe LiveData."
+  
+  # Rule 2: ViewBinding Required
+  viewbinding_required:
+    severity: error
+    applies_to: ["*Fragment.java", "*Activity.java"]
+    forbidden:
+      - "findViewById\\s*\\("
+    required:
+      - ".*Binding\\s+binding"
+    message: "Use ViewBinding instead of findViewById"
+  
+  # Rule 3: AndroidViewModel Extension
+  androidviewmodel_required:
+    severity: error
+    applies_to: ["*ViewModel.java"]
+    required:
+      - "extends AndroidViewModel"
+    forbidden:
+      - "extends ViewModel[^A-Z]"
+    message: "ViewModels must extend AndroidViewModel for context access"
+  
+  # Rule 4: No Context Passing
+  no_context_passing:
+    severity: error
+    applies_to: ["*Fragment.java", "*Activity.java"]
+    forbidden:
+      - "viewModel\\.[a-zA-Z]*\\(.*[Cc]ontext.*\\)"
+      - "\\.setContext\\("
+    message: "Do not pass Context to ViewModel. Use getApplication() in ViewModel."
+  
+  # Rule 5: LiveData Observation Only
+  livedata_observation:
+    severity: error
+    applies_to: ["*Fragment.java", "*Activity.java"]
+    required:
+      - "\\.observe\\("
+    forbidden:
+      - "new.*Call<"
+      - "retrofit\\."
+      - "api\\."
+      - "\\.enqueue\\("
+    message: "Views must only observe LiveData, not execute network requests"
+  
+  # Rule 6: Private Methods in ViewModel
+  private_viewmodel_methods:
+    severity: warning
+    applies_to: ["*ViewModel.java"]
+    patterns:
+      - pattern: "public\\s+void\\s+(validate|process|handle|execute|perform|calculate)\\w*"
+        message: "Internal helper methods should be private"
+  
+  # Rule 7: No Return Values from ViewModel
+  no_viewmodel_returns:
+    severity: error
+    applies_to: ["*ViewModel.java"]
+    forbidden:
+      - "public\\s+(?!void|LiveData|MutableLiveData)\\w+\\s+\\w+\\s*\\("
+    message: "ViewModel methods must not return values. Use MutableLiveData instead."
+  
+  # Rule 8: Proper MVVM Structure
+  mvvm_structure:
+    severity: info
+    folder_structure:
+      required:
+        - "ui/*/Fragment.java"
+        - "ui/*/ViewModel.java"
+        - "ui/*/layout/*.xml"
+    message: "Follow ui/<feature> folder structure for MVVM"
+
+# Enforcement Configuration
+enforcement:
+  pre_commit_hooks:
+    - check_mvvm_violations
+    - validate_viewbinding_usage
+    - verify_androidviewmodel_extension
+  
+  ide_integration:
+    real_time_checking: true
+    highlight_violations: true
+    suggest_fixes: true

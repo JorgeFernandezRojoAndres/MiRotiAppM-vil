@@ -1,8 +1,11 @@
 package com.jorge.mirotimobile.ui.cadete.seguimiento;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.jorge.mirotimobile.model.DetallePedidoInfoDTO;
 import com.jorge.mirotimobile.model.PedidoDTO;
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrackingCadeteViewModel extends ViewModel {
+public class TrackingCadeteViewModel extends AndroidViewModel {
 
     public enum EstadoEntrega {
         ESPERANDO,
@@ -23,24 +26,9 @@ public class TrackingCadeteViewModel extends ViewModel {
     private final MutableLiveData<PedidoDTO> entregaActual = new MutableLiveData<>();
     private final MutableLiveData<EstadoEntrega> estadoEntrega = new MutableLiveData<>(EstadoEntrega.ESPERANDO);
 
-    public TrackingCadeteViewModel() {
-        List<DetallePedidoInfoDTO> detalles = new ArrayList<>();
-        DetallePedidoInfoDTO detalle = new DetallePedidoInfoDTO();
-        detalle.setPlato("Ensalada mixta");
-        detalle.setCantidad(1);
-        detalle.setSubtotal(3500);
-        detalles.add(detalle);
-
-        PedidoDTO inicial = new PedidoDTO();
-        inicial.setId(908);
-        inicial.setEstado("EN_CAMINO");
-        inicial.setTotal(3500);
-        inicial.setDetalles(detalles);
-        inicial.setFechaHora("2025-12-13T21:30:00");
-
-        entregas.setValue(Arrays.asList(inicial));
-        entregaActual.setValue(inicial);
-        estadoEntrega.setValue(mapEstado(inicial.getEstado()));
+    public TrackingCadeteViewModel(@NonNull Application application) {
+        super(application);
+        inicializarDatosPrueba();
     }
 
     public LiveData<List<PedidoDTO>> getEntregas() {
@@ -60,8 +48,49 @@ public class TrackingCadeteViewModel extends ViewModel {
     }
 
     public void marcarEntregado() {
+        if (!puedeMarcarEntregado()) {
+            return;
+        }
+        
+        actualizarEstadoEntregado();
+    }
+
+    private void inicializarDatosPrueba() {
+        PedidoDTO inicial = crearPedidoPrueba();
+        entregas.setValue(Arrays.asList(inicial));
+        entregaActual.setValue(inicial);
+        estadoEntrega.setValue(mapEstado(inicial.getEstado()));
+    }
+    
+    private PedidoDTO crearPedidoPrueba() {
+        List<DetallePedidoInfoDTO> detalles = crearDetallesPrueba();
+        
+        PedidoDTO pedido = new PedidoDTO();
+        pedido.setId(908);
+        pedido.setEstado("EN_CAMINO");
+        pedido.setTotal(3500);
+        pedido.setDetalles(detalles);
+        pedido.setFechaHora("2025-12-13T21:30:00");
+        
+        return pedido;
+    }
+    
+    private List<DetallePedidoInfoDTO> crearDetallesPrueba() {
+        List<DetallePedidoInfoDTO> detalles = new ArrayList<>();
+        DetallePedidoInfoDTO detalle = new DetallePedidoInfoDTO();
+        detalle.setPlato("Ensalada mixta");
+        detalle.setCantidad(1);
+        detalle.setSubtotal(3500);
+        detalles.add(detalle);
+        return detalles;
+    }
+    
+    private boolean puedeMarcarEntregado() {
         EstadoEntrega current = estadoEntrega.getValue();
-        if (current == EstadoEntrega.ENTREGADO) return;
+        return current != EstadoEntrega.ENTREGADO;
+    }
+    
+    private void actualizarEstadoEntregado() {
         estadoEntrega.setValue(EstadoEntrega.ENTREGADO);
         PedidoDTO actual = entregaActual.getValue();
         if (actual != null) {
@@ -69,7 +98,7 @@ public class TrackingCadeteViewModel extends ViewModel {
             entregaActual.setValue(actual);
         }
     }
-
+    
     private EstadoEntrega mapEstado(String estado) {
         if ("EN_CAMINO".equalsIgnoreCase(estado)) {
             return EstadoEntrega.EN_CAMINO;

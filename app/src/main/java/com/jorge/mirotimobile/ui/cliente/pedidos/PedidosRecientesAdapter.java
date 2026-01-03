@@ -54,9 +54,11 @@ public class PedidosRecientesAdapter extends RecyclerView.Adapter<PedidosRecient
         }
 
         void bind(PedidoResumen pedido) {
-            binding.txtPedidoTitulo.setText(String.format(Locale.getDefault(), "Pedido %s", pedido.getNumero()));
-            binding.txtPedidoFecha.setText("Fecha: " + pedido.getFecha());
-            binding.txtPedidoEstado.setText("Estado: " + pedido.getEstado());
+        binding.txtPedidoTitulo.setText(String.format(Locale.getDefault(), "Pedido %s", pedido.getNumero()));
+        binding.txtPedidoFecha.setText("Fecha: " + pedido.getFecha());
+        binding.txtPedidoEstado.setText("Estado: " + pedido.getEstado());
+        binding.txtPedidoCadete.setText("Cadete: " + (pedido.getCadete() == null ? "Sin asignar" : pedido.getCadete()));
+        binding.txtPedidoTotal.setText("Total: " + (pedido.getTotal() == null ? "-" : pedido.getTotal()));
             int colorRes;
             switch (pedido.getEstado().toLowerCase(Locale.ROOT)) {
                 case "entregado":

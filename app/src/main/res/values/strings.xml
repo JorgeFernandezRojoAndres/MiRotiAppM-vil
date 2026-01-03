@@ -8,4 +8,7 @@
     <string name="mensaje_sin_telefono">Teléfono del cliente no disponible</string>
     <string name="mensaje_error_dialer">No se pudo abrir el marcador telefónico</string>
     <string name="mensaje_contactar_cadete_sin_telefono">Teléfono del cadete no disponible</string>
+    <string name="desc_notifications">Botón de notificaciones</string>
+    <string name="notification_updates_placeholder">Actualizaciones recientes para ti</string>
+    <string name="notification_history_title">Historial de notificaciones</string>
 </resources>
