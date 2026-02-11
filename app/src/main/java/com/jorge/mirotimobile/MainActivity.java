@@ -28,6 +28,7 @@ import com.jorge.mirotimobile.ui.cliente.pedidos.PedidosViewModel;
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel mainViewModel;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +72,23 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         bottomNav.setItemIconTintList(ColorStateList.valueOf(Color.BLACK));
         bottomNav.setItemTextColor(ColorStateList.valueOf(Color.BLACK));
-        
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(bottomNav, navController);
+        this.navController = null;
+        try {
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                this.navController = navHostFragment.getNavController();
+                try {
+                    NavigationUI.setupWithNavController(bottomNav, this.navController);
+                } catch (Exception e) {
+                    Log.w("MAIN_FLOW","NavigationUI.setupWithNavController failed", e);
+                }
+            } else {
+                Log.w("MAIN_FLOW","NavHostFragment not found (nav_host_fragment)");
+            }
+        } catch (Exception e) {
+            Log.w("MAIN_FLOW","Failed obtaining NavController", e);
+        }
         
         // Observar configuración del menú
         mainViewModel.getEventoConfigurarMenu().observe(this, event -> {
@@ -86,11 +99,23 @@ public class MainActivity extends AppCompatActivity {
         
         // Observar eventos de navegación
         mainViewModel.getEventoNavegacion().observe(this, event -> {
+            if (event == null || this.navController == null) {
+                Log.w("MAIN_FLOW","eventoNavegacion ignored: event or navController null");
+                return;
+            }
             Integer destinationId = event.getContentIfNotHandled();
+            if (destinationId == null) {
+                Log.w("MAIN_FLOW","eventoNavegacion content null");
+                return;
+            }
             NavOptions options = new NavOptions.Builder()
                     .setLaunchSingleTop(true)
                     .build();
-            navController.navigate(destinationId, null, options);
+            try {
+                this.navController.navigate(destinationId, null, options);
+            } catch (Exception e) {
+                Log.w("MAIN_FLOW","navController.navigate failed to " + destinationId, e);
+            }
         });
         
         bottomNav.setOnItemSelectedListener(item -> {
@@ -101,9 +126,13 @@ public class MainActivity extends AppCompatActivity {
         PedidosViewModel pedidosViewModel = new ViewModelProvider(this).get(PedidosViewModel.class);
         pedidosViewModel.getPedidos().observe(this, mainViewModel::onPedidosChanged);
 
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            mainViewModel.onNavigateToTracking();
-        });
+        if (this.navController != null) {
+            this.navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                mainViewModel.onNavigateToTracking();
+            });
+        } else {
+            Log.w("MAIN_FLOW","navController null; cannot add destination changed listener");
+        }
     }
 
     private void applySystemBarInsets() {

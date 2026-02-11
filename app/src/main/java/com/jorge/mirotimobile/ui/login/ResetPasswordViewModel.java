@@ -9,8 +9,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.jorge.mirotimobile.Retrofit.ApiService;
-import com.jorge.mirotimobile.Retrofit.RetrofitClient;
+import com.jorge.mirotimobile.retrofit.ApiService;
+import com.jorge.mirotimobile.retrofit.RetrofitClient;
 import com.jorge.mirotimobile.model.GenericResponse;
 import com.jorge.mirotimobile.model.ResetPasswordRequest;
 

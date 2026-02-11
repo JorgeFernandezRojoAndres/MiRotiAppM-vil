@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.jorge.mirotimobile.Retrofit.ApiService;
-import com.jorge.mirotimobile.Retrofit.RetrofitClient;
+import com.jorge.mirotimobile.retrofit.ApiService;
+import com.jorge.mirotimobile.retrofit.RetrofitClient;
 import com.jorge.mirotimobile.data.CadeteService;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.PedidoDTO;
@@ -55,8 +55,7 @@ public class EntregasViewModel extends AndroidViewModel {
                 boolean mostrarTomarPedido,
                 boolean mostrarIniciarEntrega,
                 boolean mostrarAcciones,
-                boolean mostrarCompletado
-        ) {
+                boolean mostrarCompletado) {
             this.backgroundColorRes = backgroundColorRes;
             this.titulo = titulo;
             this.descripcion = descripcion;
@@ -114,20 +113,22 @@ public class EntregasViewModel extends AndroidViewModel {
     private final MutableLiveData<String> estadoEntregaDescripcion = new MutableLiveData<>();
     private final MutableLiveData<Integer> btnTomarPedidoVisibility = new MutableLiveData<>();
     private final MutableLiveData<Integer> btnIniciarEntregaVisibility = new MutableLiveData<>();
-    
+
     public static class ColorFilterData {
         public final int color;
         public final android.graphics.PorterDuff.Mode mode;
-        
+
         public ColorFilterData(int color, android.graphics.PorterDuff.Mode mode) {
             this.color = color;
             this.mode = mode;
         }
     }
+
     private final MutableLiveData<String> pedidoActualId = new MutableLiveData<>();
     private final MutableLiveData<String> pedidoActualDireccion = new MutableLiveData<>();
     private final MutableLiveData<String> pedidoActualCliente = new MutableLiveData<>();
     private final MutableLiveData<Integer> sinEntregasVisibility = new MutableLiveData<>();
+    private final MutableLiveData<Event<Boolean>> eventoNavegarEntregas = new MutableLiveData<>();
     private final MutableLiveData<Integer> historialTituloVisibility = new MutableLiveData<>();
     private final MutableLiveData<String> historialItems = new MutableLiveData<>();
     private final CadeteService cadeteService;
@@ -145,7 +146,8 @@ public class EntregasViewModel extends AndroidViewModel {
         sessionManager = new SessionManager(application.getApplicationContext());
         cadeteService = RetrofitClient.getClient(application.getApplicationContext()).create(CadeteService.class);
         apiService = RetrofitClient.getClient(application.getApplicationContext()).create(ApiService.class);
-        pedidosAsignadosService = RetrofitClient.getClient(application.getApplicationContext()).create(PedidosAsignadosService.class);
+        pedidosAsignadosService = RetrofitClient.getClient(application.getApplicationContext())
+                .create(PedidosAsignadosService.class);
 
         boolean initialEnServicio = sessionManager.isCadeteEnServicio();
         cadeteEnServicio.setValue(initialEnServicio);
@@ -158,7 +160,7 @@ public class EntregasViewModel extends AndroidViewModel {
         nombreCadete.setValue(nombreGuardado != null && !nombreGuardado.isEmpty() ? nombreGuardado : "Cadete");
 
         setPedidoActual(null);
-        
+
         cargarPerfilCadete();
         cargarPedidosAsignados();
         cargarPedidosDisponibles();
@@ -241,150 +243,155 @@ public class EntregasViewModel extends AndroidViewModel {
     public LiveData<List<PedidoDTO>> getHistorialEntregas() {
         return historialEntregas;
     }
-    
+
     public LiveData<String> getProductosTexto() {
         return productosTexto;
     }
-    
+
     public LiveData<String> getTotalTexto() {
         return totalTexto;
     }
-    
+
     public LiveData<String> getNotasTexto() {
         return notasTexto;
     }
-    
+
     public LiveData<String> getTrackingTitle() {
         return trackingTitle;
     }
-    
+
     public LiveData<String> getTrackingSubtitle() {
         return trackingSubtitle;
     }
-    
+
     public LiveData<String> getArrivalTime() {
         return arrivalTime;
     }
-    
+
     public LiveData<String> getMensajeError() {
         return mensajeError;
     }
-    
+
     public LiveData<String> getMensajeExito() {
         return mensajeExito;
     }
-    
+
     public LiveData<Event<String>> getEventoLlamarTelefono() {
         return eventoLlamarTelefono;
     }
-    
+
     public LiveData<Integer> getEstadoIconRes() {
         return estadoIconRes;
     }
-    
+
     public LiveData<String> getEstadoTitle() {
         return estadoTitle;
     }
-    
+
     public LiveData<String> getEstadoSubtitle() {
         return estadoSubtitle;
     }
-    
+
     public LiveData<Integer> getMapButtonVisibility() {
         return mapButtonVisibility;
     }
-    
+
     public LiveData<Integer> getStrokeColor() {
         return strokeColor;
     }
-    
+
     public LiveData<Integer> getStrokeWidth() {
         return strokeWidth;
     }
-    
+
     public LiveData<Integer> getCardStrokeColor() {
         return cardStrokeColor;
     }
-    
+
     public LiveData<Integer> getCardStrokeWidth() {
         return cardStrokeWidth;
     }
-    
+
     public LiveData<Integer> getCardBackgroundColor() {
         return cardBackgroundColor;
     }
-    
+
     public LiveData<android.content.res.ColorStateList> getButtonStrokeColor() {
         return buttonStrokeColor;
     }
-    
+
     public LiveData<Integer> getButtonStrokeWidth() {
         return buttonStrokeWidth;
     }
-    
+
     public LiveData<android.content.res.ColorStateList> getButtonBackgroundTint() {
         return buttonBackgroundTint;
     }
-    
+
     public LiveData<ColorFilterData> getIconColorFilter() {
         return iconColorFilter;
     }
-    
+
     public LiveData<Integer> getCardEntregaActualVisibility() {
         return cardEntregaActualVisibility;
     }
-    
+
     public LiveData<Integer> getCardSinEntregaVisibility() {
         return cardSinEntregaVisibility;
     }
-    
+
     public LiveData<Integer> getCardEstadoBackgroundColor() {
         return cardEstadoBackgroundColor;
     }
-    
+
     public LiveData<String> getEstadoEntregaTitulo() {
         return estadoEntregaTitulo;
     }
-    
+
     public LiveData<String> getEstadoEntregaDescripcion() {
         return estadoEntregaDescripcion;
     }
-    
+
     public LiveData<Integer> getBtnTomarPedidoVisibility() {
         return btnTomarPedidoVisibility;
     }
-    
+
     public LiveData<Integer> getBtnIniciarEntregaVisibility() {
         return btnIniciarEntregaVisibility;
     }
-    
+
     public LiveData<String> getPedidoActualId() {
         return pedidoActualId;
     }
-    
+
     public LiveData<String> getPedidoActualDireccion() {
         return pedidoActualDireccion;
     }
-    
+
     public LiveData<String> getPedidoActualCliente() {
         return pedidoActualCliente;
     }
-    
+
     public LiveData<Integer> getSinEntregasVisibility() {
         return sinEntregasVisibility;
     }
-    
+
     public LiveData<Integer> getHistorialTituloVisibility() {
         return historialTituloVisibility;
     }
-    
+
     public LiveData<String> getHistorialItems() {
         return historialItems;
     }
 
+    public LiveData<Event<Boolean>> getEventoNavegarEntregas() {
+        return eventoNavegarEntregas;
+    }
+
     public void cerrarEntregaActual() {
         PedidoDTO actual = pedidoActual.getValue();
-        if (actual == null) return;
+        if (actual == null)
+            return;
 
         List<PedidoDTO> historial = historialEntregas.getValue();
         if (historial == null) {
@@ -420,7 +427,8 @@ public class EntregasViewModel extends AndroidViewModel {
         pedidosAsignadosService.obtenerPedidosAsignados().enqueue(new Callback<List<PedidoDTO>>() {
             @Override
             public void onResponse(Call<List<PedidoDTO>> call, Response<List<PedidoDTO>> response) {
-                if (!response.isSuccessful()) return;
+                if (!response.isSuccessful())
+                    return;
 
                 List<PedidoDTO> asignados = response.body();
                 if (asignados != null && !asignados.isEmpty()) {
@@ -441,7 +449,8 @@ public class EntregasViewModel extends AndroidViewModel {
         apiService.obtenerPedidosDisponibles().enqueue(new Callback<List<PedidoDTO>>() {
             @Override
             public void onResponse(Call<List<PedidoDTO>> call, Response<List<PedidoDTO>> response) {
-                if (!response.isSuccessful()) return;
+                if (!response.isSuccessful())
+                    return;
 
                 List<PedidoDTO> disponibles = response.body();
                 proximasEntregas.setValue(disponibles != null ? disponibles : new ArrayList<>());
@@ -463,18 +472,21 @@ public class EntregasViewModel extends AndroidViewModel {
         Log.d("ENTREGA_FLOW", "iniciarEntrega() called");
         PedidoDTO actual = pedidoActual.getValue();
         Log.d("ENTREGA_FLOW", "pedidoActual: " + (actual != null ? actual.getId() : "null"));
-        if (actual == null) return;
+        if (actual == null)
+            return;
         iniciarEntrega(actual.getId());
     }
 
     public void tomarPedido() {
         PedidoDTO actual = pedidoActual.getValue();
-        if (actual == null) return;
+        if (actual == null)
+            return;
         actualizarPedidoActual(actual, ESTADO_ASIGNADO_AL_CADETE);
     }
 
     public void tomarPedido(int idPedido) {
-        if (pedidoActual.getValue() != null) return;
+        if (pedidoActual.getValue() != null)
+            return;
         apiService.tomarPedido(idPedido).enqueue(new Callback<PedidoDTO>() {
             @Override
             public void onResponse(Call<PedidoDTO> call, Response<PedidoDTO> response) {
@@ -482,10 +494,12 @@ public class EntregasViewModel extends AndroidViewModel {
                     setPedidoActual(response.body());
 
                     List<PedidoDTO> actuales = proximasEntregas.getValue();
-                    if (actuales == null) return;
+                    if (actuales == null)
+                        return;
                     List<PedidoDTO> restantes = new ArrayList<>();
                     for (PedidoDTO p : actuales) {
-                        if (p != null && p.getId() != idPedido) restantes.add(p);
+                        if (p != null && p.getId() != idPedido)
+                            restantes.add(p);
                     }
                     proximasEntregas.setValue(restantes);
                 }
@@ -525,6 +539,7 @@ public class EntregasViewModel extends AndroidViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("ENTREGA_FLOW", "Pedido marcado como entregado desde API");
                     cerrarEntregaActual();
+                    eventoNavegarEntregas.setValue(new Event<>(true));
                 } else {
                     Log.e("ENTREGA_FLOW", "API respondió con error al marcar entrega: " + response.code());
                 }
@@ -543,9 +558,9 @@ public class EntregasViewModel extends AndroidViewModel {
             mensajeError.setValue("Dirección del cliente no disponible");
             return;
         }
-        
+
         Log.d("MAPA_DEBUG", new com.google.gson.Gson().toJson(actual));
-        
+
         String direccion = actual.getDireccion();
         if (direccion == null) {
             mensajeError.setValue("Dirección del cliente no disponible");
@@ -558,7 +573,7 @@ public class EntregasViewModel extends AndroidViewModel {
         }
         eventoAbrirMapa.setValue(new Event<>(direccionTrimmed));
     }
-    
+
     public void marcarEntrega() {
         PedidoDTO actual = pedidoActual.getValue();
         if (actual == null) {
@@ -568,7 +583,7 @@ public class EntregasViewModel extends AndroidViewModel {
         marcarEntregaCompletada();
         mensajeExito.setValue("Entrega completada");
     }
-    
+
     public void contactarCliente() {
         PedidoDTO actual = pedidoActual.getValue();
         if (actual == null) {
@@ -589,7 +604,8 @@ public class EntregasViewModel extends AndroidViewModel {
     }
 
     private EstadoEntrega mapEstado(String estado) {
-        if (estado == null) return EstadoEntrega.EN_ESPERA;
+        if (estado == null)
+            return EstadoEntrega.EN_ESPERA;
         String normalized = estado.trim().toUpperCase();
         switch (normalized) {
             case ESTADO_EN_PREPARACION:
@@ -617,13 +633,13 @@ public class EntregasViewModel extends AndroidViewModel {
     private void setPedidoActual(PedidoDTO pedido) {
         pedidoActual.setValue(pedido);
         puedeTomarPedidos.setValue(pedido == null);
-        
+
         EstadoEntrega estado = mapEstado(pedido != null ? pedido.getEstado() : null);
         estadoEntrega.setValue(estado);
-        
+
         EstadoEntregaUiState uiState = mapEstadoEntregaUi(estado);
         estadoEntregaUi.setValue(uiState);
-        
+
         if (pedido != null) {
             actualizarTextosUI(pedido);
             actualizarEstadoUI(estado);
@@ -631,7 +647,7 @@ public class EntregasViewModel extends AndroidViewModel {
         }
         actualizarEstadoEntregaUI(uiState);
     }
-    
+
     private void actualizarTextosUI(PedidoDTO pedido) {
         if (pedido == null) {
             trackingTitle.setValue("Seguimiento del Cadete");
@@ -642,17 +658,18 @@ public class EntregasViewModel extends AndroidViewModel {
             notasTexto.setValue("");
             return;
         }
-        
+
         try {
             // Tracking info
             trackingTitle.setValue("Entrega #" + pedido.getId());
             trackingSubtitle.setValue(formatFechayEstado(pedido));
-            
+
             // Arrival time (20 min from now)
             java.time.LocalDateTime llegada = java.time.LocalDateTime.now().plusMinutes(20);
-            String llegadaTexto = "Llegada estimada: " + llegada.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.getDefault()));
+            String llegadaTexto = "Llegada estimada: " + llegada
+                    .format(java.time.format.DateTimeFormatter.ofPattern("HH:mm", java.util.Locale.getDefault()));
             arrivalTime.setValue(llegadaTexto);
-            
+
             // Productos
             StringBuilder productos = new StringBuilder("Productos: ");
             if (pedido.getDetalles() != null && !pedido.getDetalles().isEmpty()) {
@@ -667,10 +684,10 @@ public class EntregasViewModel extends AndroidViewModel {
                 productos.append("Sin detalles");
             }
             productosTexto.setValue(productos.toString());
-            
+
             // Total
             totalTexto.setValue("Total: $" + String.format("%.0f", pedido.getTotal()));
-            
+
             // Notas
             String direccion = pedido.getDireccion() != null ? pedido.getDireccion() : "dirección no disponible";
             notasTexto.setValue("Notas: Entregar en " + direccion);
@@ -684,7 +701,7 @@ public class EntregasViewModel extends AndroidViewModel {
             notasTexto.setValue("Notas: Entregar pedido");
         }
     }
-    
+
     private String formatFechayEstado(PedidoDTO pedido) {
         String fecha = pedido.getFechaHora();
         String estado = pedido.getEstado() != null ? pedido.getEstado() : "Pendiente";
@@ -693,29 +710,24 @@ public class EntregasViewModel extends AndroidViewModel {
         }
         return "Estado: " + estado;
     }
-    
+
     private void actualizarEstadoUI(EstadoEntrega estado) {
         try {
             boolean enCamino = estado == EstadoEntrega.EN_CAMINO;
-            
-            estadoIconRes.setValue(enCamino ? 
-                android.R.drawable.ic_dialog_map : android.R.drawable.ic_popup_sync);
-                
-            estadoTitle.setValue(enCamino ? 
-                "Entrega en camino" : "Sin entrega activa");
-            estadoSubtitle.setValue(enCamino ? 
-                "Abrí el mapa para llegar al domicilio del cliente" : 
-                "Tomá un pedido desde Próximas entregas");
-                
-            mapButtonVisibility.setValue(enCamino ? 
-                android.view.View.VISIBLE : android.view.View.GONE);
-                
-            strokeColor.setValue(enCamino ? 
-                com.jorge.mirotimobile.R.color.miroti_orange : 
-                com.jorge.mirotimobile.R.color.cadete_state_espera);
-                
+
+            estadoIconRes.setValue(enCamino ? android.R.drawable.ic_dialog_map : android.R.drawable.ic_popup_sync);
+
+            estadoTitle.setValue(enCamino ? "Entrega en camino" : "Sin entrega activa");
+            estadoSubtitle.setValue(enCamino ? "Abrí el mapa para llegar al domicilio del cliente"
+                    : "Tomá un pedido desde Próximas entregas");
+
+            mapButtonVisibility.setValue(enCamino ? android.view.View.VISIBLE : android.view.View.GONE);
+
+            strokeColor.setValue(enCamino ? com.jorge.mirotimobile.R.color.miroti_orange
+                    : com.jorge.mirotimobile.R.color.cadete_state_espera);
+
             strokeWidth.setValue(enCamino ? 2 : 0);
-            
+
             actualizarEstilosUI(enCamino);
         } catch (Exception e) {
             // Valores por defecto en caso de error
@@ -725,53 +737,56 @@ public class EntregasViewModel extends AndroidViewModel {
             mapButtonVisibility.setValue(android.view.View.GONE);
         }
     }
-    
+
     private void actualizarEstilosUI(boolean enCamino) {
         try {
             android.content.Context context = getApplication().getApplicationContext();
-            
-            int colorRes = enCamino ? 
-                androidx.core.content.ContextCompat.getColor(context, com.jorge.mirotimobile.R.color.miroti_orange) :
-                androidx.core.content.ContextCompat.getColor(context, com.jorge.mirotimobile.R.color.cadete_state_espera);
-                
-            int backgroundColorRes = androidx.core.content.ContextCompat.getColor(context, com.jorge.mirotimobile.R.color.cadete_state_espera);
+
+            int colorRes = enCamino
+                    ? androidx.core.content.ContextCompat.getColor(context,
+                            com.jorge.mirotimobile.R.color.miroti_orange)
+                    : androidx.core.content.ContextCompat.getColor(context,
+                            com.jorge.mirotimobile.R.color.cadete_state_espera);
+
+            int backgroundColorRes = androidx.core.content.ContextCompat.getColor(context,
+                    com.jorge.mirotimobile.R.color.cadete_state_espera);
             int whiteColor = androidx.core.content.ContextCompat.getColor(context, android.R.color.white);
-            
+
             cardStrokeColor.setValue(colorRes);
-            cardStrokeWidth.setValue((int) Math.round(context.getResources().getDisplayMetrics().density * (enCamino ? 2 : 0)));
+            cardStrokeWidth.setValue(
+                    (int) Math.round(context.getResources().getDisplayMetrics().density * (enCamino ? 2 : 0)));
             cardBackgroundColor.setValue(backgroundColorRes);
-            
+
             android.content.res.ColorStateList colorStateList = android.content.res.ColorStateList.valueOf(colorRes);
             buttonStrokeColor.setValue(colorStateList);
-            buttonStrokeWidth.setValue((int) Math.round(context.getResources().getDisplayMetrics().density * (enCamino ? 2 : 0)));
+            buttonStrokeWidth.setValue(
+                    (int) Math.round(context.getResources().getDisplayMetrics().density * (enCamino ? 2 : 0)));
             buttonBackgroundTint.setValue(android.content.res.ColorStateList.valueOf(backgroundColorRes));
-            
+
             iconColorFilter.setValue(new ColorFilterData(whiteColor, android.graphics.PorterDuff.Mode.SRC_IN));
         } catch (Exception e) {
             // No hacer nada si hay error en estilos
         }
     }
-    
+
     private void actualizarEstadoEntregaUI(EstadoEntregaUiState ui) {
         android.content.Context context = getApplication().getApplicationContext();
-        
-        cardEntregaActualVisibility.setValue(ui.mostrarEntregaActual ? 
-            android.view.View.VISIBLE : android.view.View.GONE);
-        cardSinEntregaVisibility.setValue(ui.mostrarEntregaActual ? 
-            android.view.View.GONE : android.view.View.VISIBLE);
-            
+
+        cardEntregaActualVisibility
+                .setValue(ui.mostrarEntregaActual ? android.view.View.VISIBLE : android.view.View.GONE);
+        cardSinEntregaVisibility.setValue(ui.mostrarEntregaActual ? android.view.View.GONE : android.view.View.VISIBLE);
+
         cardEstadoBackgroundColor.setValue(
-            androidx.core.content.ContextCompat.getColor(context, ui.backgroundColorRes));
-            
+                androidx.core.content.ContextCompat.getColor(context, ui.backgroundColorRes));
+
         estadoEntregaTitulo.setValue(ui.titulo);
         estadoEntregaDescripcion.setValue(ui.descripcion);
-        
-        btnTomarPedidoVisibility.setValue(ui.mostrarTomarPedido ? 
-            android.view.View.VISIBLE : android.view.View.GONE);
-        btnIniciarEntregaVisibility.setValue(ui.mostrarIniciarEntrega ? 
-            android.view.View.VISIBLE : android.view.View.GONE);
+
+        btnTomarPedidoVisibility.setValue(ui.mostrarTomarPedido ? android.view.View.VISIBLE : android.view.View.GONE);
+        btnIniciarEntregaVisibility
+                .setValue(ui.mostrarIniciarEntrega ? android.view.View.VISIBLE : android.view.View.GONE);
     }
-    
+
     private void actualizarPedidoActualUI(PedidoDTO pedido) {
         if (pedido == null) {
             pedidoActualId.setValue("");
@@ -779,29 +794,29 @@ public class EntregasViewModel extends AndroidViewModel {
             pedidoActualCliente.setValue("");
             return;
         }
-        
+
         pedidoActualId.setValue("Pedido #" + pedido.getId());
         pedidoActualDireccion.setValue(pedido.getDireccion() != null ? pedido.getDireccion() : "");
         pedidoActualCliente.setValue(pedido.getCliente() != null ? pedido.getCliente() : "");
     }
-    
+
     public void onProximasEntregasChanged(List<PedidoDTO> proximas) {
-        sinEntregasVisibility.setValue(proximas == null || proximas.isEmpty() ? 
-            android.view.View.VISIBLE : android.view.View.GONE);
+        sinEntregasVisibility
+                .setValue(proximas == null || proximas.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
     }
-    
+
     public void onHistorialChanged(List<PedidoDTO> historial) {
         if (historial == null || historial.isEmpty()) {
             historialTituloVisibility.setValue(android.view.View.GONE);
             historialItems.setValue("");
             return;
         }
-        
+
         historialTituloVisibility.setValue(android.view.View.VISIBLE);
         StringBuilder items = new StringBuilder();
         for (PedidoDTO pedido : historial) {
             items.append(String.format("Pedido #%d · %s\n", pedido.getId(),
-                pedido.getEstado() != null ? pedido.getEstado() : ""));
+                    pedido.getEstado() != null ? pedido.getEstado() : ""));
         }
         historialItems.setValue(items.toString());
     }
@@ -815,7 +830,8 @@ public class EntregasViewModel extends AndroidViewModel {
     }
 
     private EstadoEntregaUiState mapEstadoEntregaUi(EstadoEntrega estado) {
-        if (estado == null) estado = EstadoEntrega.EN_ESPERA;
+        if (estado == null)
+            estado = EstadoEntrega.EN_ESPERA;
         switch (estado) {
             case EN_PREPARACION:
                 return new EstadoEntregaUiState(
@@ -826,8 +842,7 @@ public class EntregasViewModel extends AndroidViewModel {
                         false,
                         true,
                         false,
-                        false
-                );
+                        false);
             case ASIGNADO_AL_CADETE:
                 return new EstadoEntregaUiState(
                         com.jorge.mirotimobile.R.color.estado_proceso,
@@ -837,8 +852,7 @@ public class EntregasViewModel extends AndroidViewModel {
                         false,
                         true,
                         false,
-                        false
-                );
+                        false);
             case EN_CAMINO:
                 return new EstadoEntregaUiState(
                         com.jorge.mirotimobile.R.color.estado_proceso,
@@ -848,8 +862,7 @@ public class EntregasViewModel extends AndroidViewModel {
                         false,
                         false,
                         true,
-                        false
-                );
+                        false);
             case ENTREGADO:
                 return new EstadoEntregaUiState(
                         com.jorge.mirotimobile.R.color.estado_entregado,
@@ -859,8 +872,7 @@ public class EntregasViewModel extends AndroidViewModel {
                         false,
                         false,
                         false,
-                        true
-                );
+                        true);
             case EN_ESPERA:
             default:
                 return new EstadoEntregaUiState(
@@ -871,8 +883,7 @@ public class EntregasViewModel extends AndroidViewModel {
                         false,
                         false,
                         false,
-                        false
-                );
+                        false);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.Retrofit;
+package com.jorge.mirotimobile.retrofit;
 
 import com.jorge.mirotimobile.model.CrearPedidoRequest;
 import com.jorge.mirotimobile.model.GenericResponse;

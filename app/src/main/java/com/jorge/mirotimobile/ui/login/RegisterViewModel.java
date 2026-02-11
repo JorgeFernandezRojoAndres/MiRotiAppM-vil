@@ -7,8 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.jorge.mirotimobile.Retrofit.ApiService;
-import com.jorge.mirotimobile.Retrofit.RetrofitClient;
+import com.jorge.mirotimobile.retrofit.ApiService;
+import com.jorge.mirotimobile.retrofit.RetrofitClient;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.RegisterRequest;
 import com.jorge.mirotimobile.model.Usuario;

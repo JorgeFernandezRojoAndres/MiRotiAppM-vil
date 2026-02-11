@@ -7,36 +7,34 @@ import java.util.List;
 
 public class PedidoDTO implements Serializable {
 
-    @SerializedName(value = "Id", alternate = {"id"})
+    @SerializedName(value = "Id", alternate = { "id" })
     private int id;
 
-    @SerializedName(value = "FechaHora", alternate = {"fechaHora"})
+    @SerializedName(value = "FechaHora", alternate = { "fechaHora" })
     private String fechaHora;
 
-    @SerializedName(value = "Estado", alternate = {"estado"})
+    @SerializedName(value = "Estado", alternate = { "estado" })
     private String estado;
 
-    @SerializedName(value = "Total", alternate = {"total"})
+    @SerializedName(value = "Total", alternate = { "total" })
     private double total;
 
-    @SerializedName(value = "Detalles", alternate = {"detalles"})
+    @SerializedName(value = "Detalles", alternate = { "detalles" })
     private List<DetallePedidoInfoDTO> detalles;
 
-    @SerializedName(value = "Telefono", alternate = {"telefono", "ClienteTelefono", "clienteTelefono"})
+    @SerializedName(value = "Telefono", alternate = { "telefono", "ClienteTelefono", "clienteTelefono" })
     private String telefono;
-    @SerializedName(value = "CadeteTelefono", alternate = {"cadeteTelefono", "CadetePhone", "cadetePhone"})
+    @SerializedName(value = "CadeteTelefono", alternate = { "cadeteTelefono", "CadetePhone", "cadetePhone",
+            "telefonoCadete", "TelefonoCadete", "cadete_telefono", "Cadete_Telefono", "CadetPhone", "phone" })
     private String cadeteTelefono;
 
-    @SerializedName(
-            value = "ClienteDireccion",
-            alternate = {"clienteDireccion", "direccion", "Direccion"}
-    )
+    @SerializedName(value = "ClienteDireccion", alternate = { "clienteDireccion", "direccion", "Direccion" })
     private String direccion;
 
-    @SerializedName(value = "Cliente", alternate = {"cliente"})
+    @SerializedName(value = "Cliente", alternate = { "cliente" })
     private String cliente;
 
-    @SerializedName(value = "Cadete", alternate = {"cadete"})
+    @SerializedName(value = "Cadete", alternate = { "cadete" })
     private String cadete;
 
     public int getId() {

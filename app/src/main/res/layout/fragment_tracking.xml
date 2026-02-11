@@ -165,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:weightSum="2">
 
                 <com.google.android.material.button.MaterialButton
@@ -191,15 +191,24 @@
                     android:textColor="@color/cadete_text_primary" />
                 </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAbrirMapaCliente"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ver mapa"
-                android:textAllCaps="false"
-                android:layout_marginTop="12dp"
-                android:backgroundTint="@color/cadete_state_activo"
-                android:textColor="@color/cadete_text_primary" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAbrirMapaCliente"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ver mapa"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/cadete_state_activo"
+                    android:textColor="@color/cadete_text_primary" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

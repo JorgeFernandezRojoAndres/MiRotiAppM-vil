@@ -1,14 +1,15 @@
 package com.jorge.mirotimobile.ui.cliente.perfil;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.jorge.mirotimobile.Retrofit.ApiService;
-import com.jorge.mirotimobile.Retrofit.RetrofitClient;
+import com.jorge.mirotimobile.retrofit.ApiService;
+import com.jorge.mirotimobile.retrofit.RetrofitClient;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.Usuario;
 import com.jorge.mirotimobile.util.Event;
@@ -107,8 +108,21 @@ public class PerfilViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<Usuario> call, @NonNull Response<Usuario> response) {
                 loadingLiveData.postValue(false);
+                Log.d("MAIN_FLOW","obtenerPerfil onResponse: code=" + response.code() + " isSuccessful=" + response.isSuccessful());
+                
+                if (response.body() == null) {
+                    Log.w("MAIN_FLOW","obtenerPerfil response.body() is NULL; checking errorBody");
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                        Log.w("MAIN_FLOW","Error body: " + errorBody);
+                    } catch (Exception e) {
+                        Log.w("MAIN_FLOW","Error reading errorBody", e);
+                    }
+                }
+                
                 if (response.isSuccessful() && response.body() != null) {
                     Usuario usuario = response.body();
+                    Log.d("MAIN_FLOW","obtenerPerfil success: usuario=" + usuario.getNombre());
                     nombreLiveData.postValue(usuario.getNombre());
                     emailLiveData.postValue(usuario.getEmail());
                     direccionLiveData.postValue(usuario.getDireccion());
@@ -118,6 +132,7 @@ public class PerfilViewModel extends AndroidViewModel {
                     // Actualizar textos formateados
                     actualizarTextosFormateados(usuario);
                 } else {
+                    Log.w("MAIN_FLOW","obtenerPerfil failed: code=" + response.code() + " message=" + response.message());
                     errorLiveData.postValue("No se pudo cargar el perfil.");
                 }
             }
@@ -125,6 +140,7 @@ public class PerfilViewModel extends AndroidViewModel {
             @Override
             public void onFailure(@NonNull Call<Usuario> call, @NonNull Throwable t) {
                 loadingLiveData.postValue(false);
+                Log.e("MAIN_FLOW","obtenerPerfil onFailure: " + t.getMessage(), t);
                 errorLiveData.postValue("Error de conexión: " + t.getMessage());
             }
         });

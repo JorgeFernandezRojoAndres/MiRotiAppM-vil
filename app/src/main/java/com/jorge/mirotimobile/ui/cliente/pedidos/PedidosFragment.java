@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.jorge.mirotimobile.R;
 import com.jorge.mirotimobile.databinding.FragmentPedidosBinding;
+import com.jorge.mirotimobile.util.Event;
+import android.util.Log;
 
 public class PedidosFragment extends Fragment {
 
@@ -26,8 +28,8 @@ public class PedidosFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         binding = FragmentPedidosBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -35,11 +37,13 @@ public class PedidosFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+        Log.d("MAIN_FLOW", "PedidosFragment onViewCreated");
+
         configurarRecyclerView();
         viewModel = new ViewModelProvider(requireActivity()).get(PedidosViewModel.class);
         observarViewModel();
         configurarListeners();
+
         viewModel.cargarMisPedidos();
     }
 
@@ -48,38 +52,46 @@ public class PedidosFragment extends Fragment {
         binding.recyclerPedidos.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerPedidos.setAdapter(adapter);
     }
-    
+
     private void observarViewModel() {
         viewModel.getPedidos().observe(getViewLifecycleOwner(), adapter::setPedidos);
-        
+
         viewModel.getProgressVisibility().observe(getViewLifecycleOwner(), binding.progressPedidos::setVisibility);
         viewModel.getErrorVisibility().observe(getViewLifecycleOwner(), binding.txtPedidosError::setVisibility);
         viewModel.getErrorText().observe(getViewLifecycleOwner(), binding.txtPedidosError::setText);
-        
+
         viewModel.getBtnCarritoVisibility().observe(getViewLifecycleOwner(), binding.btnCarrito::setVisibility);
         viewModel.getBtnCarritoText().observe(getViewLifecycleOwner(), binding.btnCarrito::setText);
         viewModel.getBtnSeguimientoVisibility().observe(getViewLifecycleOwner(), binding.btnSeguimiento::setVisibility);
-        
-        viewModel.getEventoNavegacion().observe(getViewLifecycleOwner(), event -> {
+
+        // Observar evento de Snackbar
+        viewModel.getEventoMostrarSnackbar().observe(getViewLifecycleOwner(), event -> {
+            String mensaje = event.getContentIfNotHandled();
+            if (mensaje != null) {
+                Snackbar.make(binding.getRoot(), mensaje, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        // Observar navegación al menú
+        viewModel.getShouldNavigateToMenu().observe(getViewLifecycleOwner(), shouldNavigate -> {
+            if (Boolean.TRUE.equals(shouldNavigate)) {
+                Navigation.findNavController(requireView()).navigate(R.id.menuFragment);
+                viewModel.resetNavigateToMenu();
+            }
+        });
+
+        // Observar navegación genérica
+        viewModel.getEventoNavegar().observe(getViewLifecycleOwner(), event -> {
             Integer destinationId = event.getContentIfNotHandled();
-            Navigation.findNavController(requireView()).navigate(destinationId);
+            if (destinationId != null) {
+                Navigation.findNavController(requireView()).navigate(destinationId);
+            }
         });
     }
-    
+
     private void configurarListeners() {
-        binding.btnSeguimiento.setOnClickListener(v -> {
-            java.util.List<com.jorge.mirotimobile.model.PedidoDTO> pedidosActivos =
-                    viewModel.getPedidos().getValue();
-            if (pedidosActivos == null || pedidosActivos.isEmpty()) {
-                Snackbar.make(binding.getRoot(), "No tenés pedidos en seguimiento", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            NavHostFragment.findNavController(this).navigate(R.id.trackingFragment);
-        });
-        binding.btnCarrito.setOnClickListener(v -> {
-            Integer destinationId = viewModel.getEventoNavegacion().getValue().peekContent();
-            Navigation.findNavController(v).navigate(destinationId);
-        });
+        binding.btnSeguimiento.setOnClickListener(v -> viewModel.navegarASeguimiento());
+        binding.btnCarrito.setOnClickListener(v -> viewModel.navegarAlMenu());
     }
 
     @Override

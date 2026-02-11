@@ -8,8 +8,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.jorge.mirotimobile.Retrofit.ApiService;
-import com.jorge.mirotimobile.Retrofit.RetrofitClient;
+import com.jorge.mirotimobile.retrofit.ApiService;
+import com.jorge.mirotimobile.retrofit.RetrofitClient;
 import com.jorge.mirotimobile.localdata.SessionManager;
 import com.jorge.mirotimobile.model.Usuario;
 import com.jorge.mirotimobile.util.Event;
@@ -114,6 +114,8 @@ public class LoginViewModel extends AndroidViewModel {
 
                 if (response.isSuccessful() && response.body() != null) {
                     ApiService.TokenResponse body = response.body();
+                    Log.d("LOGIN_FLOW", "Login SUCCESS (HTTP " + response.code() + "): token=" + 
+                        (body.getToken() != null ? "presente" : "null") + ", email=" + body.getEmail());
 
                     // Validar acceso permitido (permite Admin/Administrador, Cliente, Cadete)
                     String rol = body.getRol();
@@ -124,6 +126,7 @@ public class LoginViewModel extends AndroidViewModel {
                             "Administrador".equalsIgnoreCase(rol);
 
                     if (!rolPermitido) {
+                        Log.d("LOGIN_FLOW", "Rol no permitido: " + rol);
                         mostrarError("Acceso restringido: rol no permitido en la app.");
                         return;
                     }
@@ -147,7 +150,22 @@ public class LoginViewModel extends AndroidViewModel {
                     Log.d("LOGIN_FLOW", "Login successful, posting navigateToMain Event");
                     navigateToMain.postValue(new Event<>(true));
                 } else {
-                    mostrarError("Credenciales inválidas o usuario no encontrado");
+                    int httpCode = response.code();
+                    String errorBody = null;
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        errorBody = "Error al leer error body";
+                    }
+                    Log.d("LOGIN_FLOW", "Login FAILED (HTTP " + httpCode + "): " + errorBody);
+                    
+                    if (httpCode == 401) {
+                        mostrarError("HTTP 401: Credenciales inválidas. Verifica email y contraseña.");
+                    } else {
+                        mostrarError("Error " + httpCode + ": Credenciales inválidas o usuario no encontrado");
+                    }
                 }
             }
 

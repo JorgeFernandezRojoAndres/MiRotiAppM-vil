@@ -8,7 +8,7 @@ android {
     val localProperties = Properties().apply {
         rootProject.file("local.properties").takeIf { it.exists() }?.reader()?.use { load(it) }
     }
-    val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.37"
+    val backendHost = localProperties.getProperty("backendHost") ?: "192.168.1.35"
     val localBaseUrl = "\"http://$backendHost:8080/api/\""
 
     namespace = "com.jorge.mirotimobile"

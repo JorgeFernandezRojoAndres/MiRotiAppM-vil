@@ -1,4 +1,4 @@
-package com.jorge.mirotimobile.Retrofit;
+package com.jorge.mirotimobile.retrofit;
 
 import android.content.Context;
 

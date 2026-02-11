@@ -21,6 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import android.util.Log;
 
 public class PedidosAdapter extends RecyclerView.Adapter<PedidosAdapter.PedidoViewHolder> {
 
@@ -39,7 +40,16 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosAdapter.PedidoVi
 
     @Override
     public void onBindViewHolder(@NonNull PedidoViewHolder holder, int position) {
-        holder.bind(pedidos.get(position));
+        if (position < 0 || position >= pedidos.size()) {
+            Log.w("MAIN_FLOW","onBindViewHolder invalid position: " + position);
+            return;
+        }
+        PedidoDTO pedido = pedidos.get(position);
+        try {
+            holder.bind(pedido);
+        } catch (Exception e) {
+            Log.w("MAIN_FLOW","Error binding pedido at position " + position, e);
+        }
     }
 
     @Override
@@ -64,18 +74,57 @@ public class PedidosAdapter extends RecyclerView.Adapter<PedidosAdapter.PedidoVi
         }
 
         void bind(PedidoDTO pedido) {
-            binding.txtNumeroPedido.setText("Pedido #" + pedido.getId());
-            binding.txtFechaPedido.setText(formatearFecha(pedido.getFechaHora()));
-            binding.txtTotalPedido.setText(currencyFormat.format(pedido.getTotal()));
-            EstadoPedido estado = EstadoPedido.fromString(pedido.getEstado());
-            binding.chipEstadoPedido.setText(estado.getLabel());
-            binding.chipEstadoPedido.setChipBackgroundColorResource(estado.getColorRes());
+            if (pedido == null) {
+                binding.txtNumeroPedido.setText("Pedido #");
+                binding.txtFechaPedido.setText("");
+                binding.txtTotalPedido.setText(currencyFormat.format(0));
+                binding.chipEstadoPedido.setText("");
+                return;
+            }
+
+            try {
+                binding.txtNumeroPedido.setText("Pedido #" + pedido.getId());
+            } catch (Exception e) {
+                Log.w("MAIN_FLOW","Error setting pedido id", e);
+                binding.txtNumeroPedido.setText("Pedido #");
+            }
+
+            try {
+                binding.txtFechaPedido.setText(formatearFecha(pedido.getFechaHora()));
+            } catch (Exception e) {
+                Log.w("MAIN_FLOW","Error formatting fecha", e);
+                binding.txtFechaPedido.setText("");
+            }
+
+            try {
+                binding.txtTotalPedido.setText(currencyFormat.format(pedido.getTotal()));
+            } catch (Exception e) {
+                Log.w("MAIN_FLOW","Error formatting total", e);
+                binding.txtTotalPedido.setText(currencyFormat.format(0));
+            }
+
+            try {
+                EstadoPedido estado = EstadoPedido.fromString(pedido.getEstado());
+                if (estado != null) {
+                    binding.chipEstadoPedido.setText(estado.getLabel());
+                    binding.chipEstadoPedido.setChipBackgroundColorResource(estado.getColorRes());
+                } else {
+                    binding.chipEstadoPedido.setText("");
+                }
+            } catch (Exception e) {
+                Log.w("MAIN_FLOW","Error setting estado", e);
+                binding.chipEstadoPedido.setText("");
+            }
 
             binding.cardPedido.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putInt("pedidoId", pedido.getId());
-                Navigation.findNavController(v)
-                        .navigate(R.id.detallePedidoFragment, bundle);
+                if (v == null) return;
+                try {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("pedidoId", pedido.getId());
+                    Navigation.findNavController(v).navigate(R.id.detallePedidoFragment, bundle);
+                } catch (Exception e) {
+                    Log.w("MAIN_FLOW","Navigation to detallePedidoFragment failed", e);
+                }
             });
         }
 
