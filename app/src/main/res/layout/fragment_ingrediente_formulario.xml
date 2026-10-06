@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/surface_dark"
+    android:padding="20dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/txtTituloFormulario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nuevo ingrediente"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Nombre -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutNombreIngrediente"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del ingrediente"
+        app:boxStrokeColor="@color/miroti_orange"
+        app:hintTextColor="@color/miroti_orange">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editNombreIngrediente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Unidad de medida -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutUnidadIngrediente"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Unidad (kg, lt, unidad)"
+        app:boxStrokeColor="@color/miroti_orange"
+        app:hintTextColor="@color/miroti_orange">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editUnidadIngrediente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Precio -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutPrecioIngrediente"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="Precio actual en el supermercado"
+        app:boxStrokeColor="@color/miroti_orange"
+        app:hintTextColor="@color/miroti_orange"
+        app:prefixText="$ ">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editPrecioIngrediente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ⚠️ Error -->
+    <TextView
+        android:id="@+id/txtErrorFormulario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="13sp"
+        android:textColor="@color/estado_cancelado"
+        android:visibility="gone" />
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="18dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelar"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Cancelar"
+            app:strokeColor="@color/nav_icon_inactive" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/miroti_orange"
+            android:text="Guardar" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -101,6 +101,11 @@
         app:destination="@id/trackingCadeteFragment" />
 
     <fragment
+        android:id="@+id/insumosFragment"
+        android:name="com.jorge.mirotimobile.ui.insumos.InsumosFragment"
+        android:label="Insumos" />
+
+    <fragment
         android:id="@+id/perfilFragment"
         android:name="com.jorge.mirotimobile.ui.cliente.perfil.PerfilFragment"
         android:label="Perfil">

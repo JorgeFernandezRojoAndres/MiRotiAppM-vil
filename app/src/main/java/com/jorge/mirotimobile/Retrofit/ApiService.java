@@ -2,6 +2,9 @@ package com.jorge.mirotimobile.retrofit;
 
 import com.jorge.mirotimobile.model.CrearPedidoRequest;
 import com.jorge.mirotimobile.model.GenericResponse;
+import com.jorge.mirotimobile.model.Ingrediente;
+import com.jorge.mirotimobile.model.IngredienteCrearRequest;
+import com.jorge.mirotimobile.model.IngredientePrecioRequest;
 import com.jorge.mirotimobile.model.PedidoDTO;
 import com.jorge.mirotimobile.model.Plato;
 import com.jorge.mirotimobile.model.RegisterRequest;
@@ -52,6 +55,19 @@ public interface ApiService {
 
     @GET("usuarios/perfil")
     Call<Usuario> obtenerPerfil();
+
+    // ==========================================
+    // 🥕 Ingredientes / Insumos (rol Administrador de Insumos)
+    // ==========================================
+
+    @GET("ingredientes")
+    Call<List<Ingrediente>> obtenerIngredientes();
+
+    @POST("ingredientes")
+    Call<Ingrediente> crearIngrediente(@Body IngredienteCrearRequest request);
+
+    @PUT("ingredientes/{id}")
+    Call<Ingrediente> actualizarIngrediente(@Path("id") int id, @Body IngredientePrecioRequest request);
 
     class TokenResponse {
         private String token;

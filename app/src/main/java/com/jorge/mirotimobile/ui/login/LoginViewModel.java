@@ -117,13 +117,15 @@ public class LoginViewModel extends AndroidViewModel {
                     Log.d("LOGIN_FLOW", "Login SUCCESS (HTTP " + response.code() + "): token=" + 
                         (body.getToken() != null ? "presente" : "null") + ", email=" + body.getEmail());
 
-                    // Validar acceso permitido (permite Admin/Administrador, Cliente, Cadete)
+                    // Validar acceso permitido (permite Admin/Administrador, Cliente, Cadete,
+                    // Administrador de Insumos)
                     String rol = body.getRol();
                     boolean rolPermitido =
                             "Cliente".equalsIgnoreCase(rol) ||
                             "Cadete".equalsIgnoreCase(rol) ||
                             "Admin".equalsIgnoreCase(rol) ||
-                            "Administrador".equalsIgnoreCase(rol);
+                            "Administrador".equalsIgnoreCase(rol) ||
+                            "Administrador de Insumos".equalsIgnoreCase(rol);
 
                     if (!rolPermitido) {
                         Log.d("LOGIN_FLOW", "Rol no permitido: " + rol);

@@ -89,14 +89,26 @@ public class MainViewModel extends AndroidViewModel {
         String role = sessionManager.getUserRole();
         boolean isCadete = "Cadete".equalsIgnoreCase(role);
         esCadete.setValue(isCadete);
-        
-        configurarMenuSegunUsuario(isCadete);
+
+        configurarMenuSegunUsuario(isCadete, role);
     }
-    
-    private void configurarMenuSegunUsuario(boolean isCadete) {
-        int menu = isCadete ? R.menu.menu_cadete : R.menu.test_menu;
-        int destination = isCadete ? R.id.entregasFragment : R.id.bienvenidaFragment;
-        
+
+    private void configurarMenuSegunUsuario(boolean isCadete, String role) {
+        int menu;
+        int destination;
+
+        if (isCadete) {
+            menu = R.menu.menu_cadete;
+            destination = R.id.entregasFragment;
+        } else if ("Administrador de Insumos".equalsIgnoreCase(role)) {
+            // 🥕 Rol Administrador de Insumos: menú propio, sin tocar Cliente/Cadete
+            menu = R.menu.menu_insumos;
+            destination = R.id.insumosFragment;
+        } else {
+            menu = R.menu.test_menu;
+            destination = R.id.bienvenidaFragment;
+        }
+
         eventoConfigurarMenu.setValue(new Event<>(menu));
         eventoNavegacion.setValue(new Event<>(destination));
     }

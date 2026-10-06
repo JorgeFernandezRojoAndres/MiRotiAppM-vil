@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="16dp">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/txtTituloInsumos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Administración de Insumos"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/txtSubtituloInsumos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gestioná los ingredientes y sus precios actuales"
+            android:textSize="13sp"
+            android:textColor="@color/text_light"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 🔍 Búsqueda -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutBuscarInsumo"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Buscar ingrediente…"
+            app:boxStrokeColor="@color/miroti_orange"
+            app:hintTextColor="@color/miroti_orange"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:startIconTint="@color/nav_icon_inactive">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editBuscarInsumo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ⏳ Progreso -->
+        <ProgressBar
+            android:id="@+id/progressInsumos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+        <!-- ⚠️ Error -->
+        <TextView
+            android:id="@+id/txtErrorInsumos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="14sp"
+            android:textColor="@color/estado_cancelado"
+            android:visibility="gone" />
+
+        <!-- 🕳️ Lista vacía -->
+        <TextView
+            android:id="@+id/txtSinInsumos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:text="No hay ingredientes cargados.\nUsá el botón + para cargar el primero."
+            android:textSize="14sp"
+            android:textColor="@color/text_light"
+            android:visibility="gone" />
+
+        <!-- 📋 Lista -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerInsumos"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="88dp" />
+    </LinearLayout>
+
+    <!-- ➕ FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNuevoInsumo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Cargar nuevo ingrediente"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/miroti_orange"
+        app:tint="@color/white" />
+
+</FrameLayout>
