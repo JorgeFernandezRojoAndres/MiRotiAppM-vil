@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Locale;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.jorge.mirotimobile.databinding.FragmentIngredienteFormularioBinding;
 import com.jorge.mirotimobile.model.Ingrediente;
@@ -73,6 +75,12 @@ public class IngredienteFormularioFragment extends BottomSheetDialogFragment {
             binding.editUnidadIngrediente.setText(ingrediente.getUnidadMedidaTexto());
             binding.editUnidadIngrediente.setEnabled(false);
             binding.editPrecioIngrediente.setText(precioATexto(ingrediente.getPrecio()));
+            if (ingrediente.getStockActual() > 0) {
+                binding.txtStockFormulario.setText(stockATexto(ingrediente.getStockActual()));
+                binding.txtStockFormulario.setVisibility(android.view.View.VISIBLE);
+            } else {
+                binding.txtStockFormulario.setVisibility(android.view.View.GONE);
+            }
             binding.editPrecioIngrediente.requestFocus();
         }
 
@@ -137,11 +145,21 @@ public class IngredienteFormularioFragment extends BottomSheetDialogFragment {
         return edit.getText() != null ? edit.getText().toString().trim() : "";
     }
 
+    /**
+     * Traduce un precio a texto para mostrarlo en el EditText.
+     */
     private String precioATexto(double precio) {
         if (precio == (long) precio) {
             return String.valueOf((long) precio);
         }
         return String.valueOf(precio);
+    }
+
+    /**
+     * Traduce el stock a texto con 2 decimales (sin separador decimal).
+     */
+    private String stockATexto(double stock) {
+        return String.format(Locale.US, "%.2f", stock);
     }
 
     private Double parsearPrecio(String texto) {

@@ -88,6 +88,24 @@
         android:textColor="@color/estado_cancelado"
         android:visibility="gone" />
 
+    <!-- 📊 Stock (solo lectura) -->
+    <TextView
+        android:id="@+id/txtStockFormulario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Stock: --"
+        android:textSize="13sp"
+        android:textColor="@color/miroti_orange_light" />
+
+    <!-- Botones -->
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="13sp"
+        android:textColor="@color/estado_cancelado"
+        android:visibility="gone" />
+
     <!-- Botones -->
     <LinearLayout
         android:layout_width="match_parent"

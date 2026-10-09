@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jorge.mirotimobile.databinding.ItemIngredienteBinding;
 import com.jorge.mirotimobile.model.Ingrediente;
+import com.jorge.mirotimobile.R;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -74,6 +75,15 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
             binding.txtUnidadIngrediente.setText(unidad == null || unidad.isEmpty()
                     ? "" : "Por " + unidad);
             binding.txtPrecioIngrediente.setText(currencyFormat.format(ingrediente.getPrecio()));
+
+            // 📊 Stock — solo lectura, no se puede tocar desde aquí.
+            if (ingrediente.getStockActual() > 0) {
+                binding.txtStockIngrediente.setText(String.format(Locale.US, "%.2f", ingrediente.getStockActual()));
+                binding.txtStockIngrediente.setTextColor(binding.getRoot().getContext().getColor(R.color.text_light));
+                binding.txtStockIngrediente.setVisibility(android.view.View.VISIBLE);
+            } else {
+                binding.txtStockIngrediente.setVisibility(android.view.View.GONE);
+            }
 
             binding.getRoot().setOnClickListener(v -> {
                 if (listener != null) {

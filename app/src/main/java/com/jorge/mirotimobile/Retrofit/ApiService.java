@@ -69,6 +69,13 @@ public interface ApiService {
     @PUT("ingredientes/{id}")
     Call<Ingrediente> actualizarIngrediente(@Path("id") int id, @Body IngredientePrecioRequest request);
 
+    // 📦 Stock de ingredientes — los nuevos endpoints de Buneo
+    @GET("ingredientes/{id}/stock")
+    Call<Ingrediente> obtenerStock(@Path("id") int id);
+
+    @PUT("ingredientes/{id}/stock")
+    Call<Ingrediente> actualizarStock(@Path("id") int id, @Body IngredientePrecioRequest request);
+
     class TokenResponse {
         private String token;
         private int id;

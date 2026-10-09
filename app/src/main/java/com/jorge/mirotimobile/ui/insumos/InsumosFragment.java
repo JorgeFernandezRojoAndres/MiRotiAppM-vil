@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -47,7 +48,7 @@ public class InsumosFragment extends Fragment implements IngredienteAdapter.OnIn
         binding.recyclerInsumos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerInsumos.setAdapter(adapter);
 
-        // 🔍 Búsqueda
+        // 🔎 Búsqueda
         binding.editBuscarInsumo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -69,6 +70,13 @@ public class InsumosFragment extends Fragment implements IngredienteAdapter.OnIn
 
         observarViewModel();
         viewModel.cargarIngredientes();
+
+        // Refresca los stocks al volver a la pantalla (los requiere el usuario fijo).
+        getViewLifecycleOwner().getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver() {
+            public void onResume(@NonNull LifecycleOwner owner) {
+                viewModel.cargarIngredientes(true);
+            }
+        });
     }
 
     private void observarViewModel() {
@@ -87,6 +95,13 @@ public class InsumosFragment extends Fragment implements IngredienteAdapter.OnIn
         viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje -> {
             if (mensaje != null) {
                 binding.txtErrorInsumos.setText(mensaje);
+            }
+        });
+
+        viewModel.getMensajeStock().observe(getViewLifecycleOwner(), mensaje -> {
+            if (mensaje != null) {
+                binding.txtStockResumen.setText(mensaje);
+                binding.txtStockResumen.setVisibility(android.view.View.VISIBLE);
             }
         });
 

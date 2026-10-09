@@ -72,6 +72,17 @@
             android:textColor="@color/estado_cancelado"
             android:visibility="gone" />
 
+        <!-- 📊 Resumen de stock -->
+        <TextView
+            android:id="@+id/txtStockResumen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Stock total: --"
+            android:textSize="13sp"
+            android:textColor="@color/miroti_orange_light"
+            android:visibility="gone" />
+
         <!-- 🕳️ Lista vacía -->
         <TextView
             android:id="@+id/txtSinInsumos"

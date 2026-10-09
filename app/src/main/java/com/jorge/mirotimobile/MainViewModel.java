@@ -104,6 +104,12 @@ public class MainViewModel extends AndroidViewModel {
             // 🥕 Rol Administrador de Insumos: menú propio, sin tocar Cliente/Cadete
             menu = R.menu.menu_insumos;
             destination = R.id.insumosFragment;
+        } else if ("Administrador de Insumos".equalsIgnoreCase(role) ||
+                "insumos@miroti.com".equalsIgnoreCase(role)) {
+            // ✅ Usuario fijo del backend para la gestión de ingredientes.
+            // Su rol (u email) corresponde a la gestión de ingredientes.
+            menu = R.menu.menu_insumos;
+            destination = R.id.insumosFragment;
         } else {
             menu = R.menu.test_menu;
             destination = R.id.bienvenidaFragment;

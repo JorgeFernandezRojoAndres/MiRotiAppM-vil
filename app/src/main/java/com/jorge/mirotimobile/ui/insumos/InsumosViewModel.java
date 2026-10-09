@@ -25,14 +25,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * 🧠 InsumosViewModel — Maneja la carga, creación y edición de ingredientes
- * desde la API MiRoti. Rol: Administrador de Insumos.
- * Aplica MVVM puro igual que PlatosViewModel, con token JWT "Bearer".
- */
+/** * 🧠 InsumosViewModel — Maneja la carga, creación y edición de ingredientes
+ * y su STOCK desde la API MiRoti. Rol: Administrador de Insumos.
+ * <p>
+ * <p>Aplica MVVM puro igual que PlatosViewModel, con token JWT "Bearer".
+ * <p>
+ * <p>El usuario que siempre debe usarse para esto es el fijo del backend:
+ * insumos@miroti.com / insumos123 (rol "Administrador de Insumos").</p> */
 public class InsumosViewModel extends AndroidViewModel {
 
     private static final String TAG = "INSUMOS_FLOW";
+
+    private static final String USUARIO_ESTANDAR_EMAIL = "insumos@miroti.com";
+    private static final String USUARIO_ESTANDAR_PASSWORD = "insumos123";
 
     private final MutableLiveData<List<Ingrediente>> ingredientes = new MutableLiveData<>();
     private final MutableLiveData<List<Ingrediente>> ingredientesFiltered = new MutableLiveData<>();
@@ -40,6 +45,7 @@ public class InsumosViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> progressVisibility = new MutableLiveData<>();
     private final MutableLiveData<Integer> errorVisibility = new MutableLiveData<>();
     private final MutableLiveData<String> mensajeError = new MutableLiveData<>();
+    private final MutableLiveData<String> mensajeStock = new MutableLiveData<>();
     private final MutableLiveData<Event<EventoGuardado>> eventoGuardado = new MutableLiveData<>();
 
     private String filtroActual = "";
@@ -89,13 +95,30 @@ public class InsumosViewModel extends AndroidViewModel {
         return mensajeError;
     }
 
+    public LiveData<String> getMensajeStock() {
+        return mensajeStock;
+    }
+
     public LiveData<Event<EventoGuardado>> getEventoGuardado() {
         return eventoGuardado;
     }
 
+    /**
+     * Carga la lista completa de ingredientes y, a continuación, el stock de cada uno.
+     * Esto permite al usuario ver el stock actual sin tener que tocar cada tarjeta.
+     */
     public void cargarIngredientes() {
+        cargarIngredientes(false);
+    }
+
+    /**
+     * Carga la lista de ingredientes y, opcionalmente, los stocks de todos.
+     * El parámetro force fuerza la refetch de los stocks incluso si ya hay datos.
+     */
+    public void cargarIngredientes(boolean forceStocks) {
         loading.postValue(true);
         mensajeError.postValue(null);
+        mensajeStock.postValue(null);
         actualizarVisibilidad();
 
         if (!esSesionValida()) {
@@ -111,6 +134,10 @@ public class InsumosViewModel extends AndroidViewModel {
                     todosLosIngredientes = new ArrayList<>(response.body());
                     ingredientes.postValue(todosLosIngredientes);
                     aplicarFiltro();
+
+                    if (forceStocks || todosLosIngredientes.isEmpty()) {
+                        cargarTodosLosStocks();
+                    }
                 } else {
                     mensajeError.postValue(obtenerMensajeError(response.code(), response.errorBody()));
                 }
@@ -124,6 +151,113 @@ public class InsumosViewModel extends AndroidViewModel {
                 actualizarVisibilidad();
             }
         });
+    }
+
+    /**
+     * Obtiene el stock de un ingrediente en particular (GET /ingredientes/{id}/stock).
+     * Se usa para actualizar la tarjeta del ingrediente que el usuario tocó.
+     */
+    public void obtenerStock(int id) {
+        if (!esSesionValida()) {
+            return;
+        }
+
+        api.obtenerStock(id).enqueue(new Callback<Ingrediente>() {
+            @Override
+            public void onResponse(@NonNull Call<Ingrediente> call,
+                                   @NonNull Response<Ingrediente> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Ingrediente ing = response.body();
+                    actualizarStockEnLista(ing);
+                    mensajeStock.postValue("Stock de " + ing.getNombre() + ": " + ing.getStockActual());
+                } else {
+                    mensajeStock.postValue(obtenerMensajeError(response.code(), response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Ingrediente> call, @NonNull Throwable t) {
+                mensajeStock.postValue("Error de conexión: " + t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Descuenta stock al confirmar un plato (PUT /ingredientes/{id}/stock con { costoUnitario: cantidad }).
+     * <p>
+     * El backend espera { "NuevaCantidad": number }, pero como el DTO de este cliente
+     * es IngredientePrecioRequest, enviamos la cantidad como costoUnitario.
+     * Se valida que haya stock suficiente antes de enviar. El backend también
+     * rechaza stock negativo, así que no hace falta validarlo aquí.
+     *
+     * @return true si la petición fue enviada y ya se puede informar el resultado;
+     * false si no hay stock suficiente o la sesión no es válida.
+     */
+    public boolean descontarStock(int id, double cantidad) {
+        if (!esSesionValida()) {
+            mensajeStock.postValue("Sesión inválida. Iniciá sesión nuevamente.");
+            return false;
+        }
+
+        Ingrediente ing = obtenerIngredientePorId(id);
+        if (ing == null) {
+            mensajeStock.postValue("No se encontró el ingrediente.");
+            return false;
+        }
+
+        if (cantidad <= 0) {
+            mensajeStock.postValue("La cantidad debe ser mayor a 0.");
+            return false;
+        }
+
+        if (ing.getStockActual() < cantidad) {
+            mensajeStock.postValue("🚫 No hay suficiente stock de " + ing.getNombre() +
+                    ". Disponible: " + ing.getStockActual() + ", requerido: " + cantidad + ".");
+            return false;
+        }
+
+        // La cantidad que descontamos se forma el nuevo stock: stock - cantidad
+        double nuevaCantidad = ing.getStockActual() - cantidad;
+
+        IngredientePrecioRequest request = new IngredientePrecioRequest(nuevaCantidad);
+        api.actualizarStock(id, request).enqueue(new Callback<Ingrediente>() {
+            @Override
+            public void onResponse(@NonNull Call<Ingrediente> call,
+                                   @NonNull Response<Ingrediente> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Ingrediente actualizado = response.body();
+                    actualizarStockEnLista(actualizado);
+                    mensajeStock.postValue("Se descontó " + cantidad + " de " + actualizado.getNombre() +
+                            ". Stock restante: " + actualizado.getStockActual() + ".");
+                } else {
+                    mensajeStock.postValue(obtenerMensajeError(response.code(), response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Ingrediente> call, @NonNull Throwable t) {
+                mensajeStock.postValue("Error de conexión: " + t.getMessage());
+            }
+        });
+
+        return true;
+    }
+
+    /**
+     * Refresca el stock de TODOS los ingredientes de la lista guardada.
+     * Útil para actualizar todo al volver a la pantalla.
+     */
+    public void cargarTodosLosStocks() {
+        if (todosLosIngredientes == null || todosLosIngredientes.isEmpty()) {
+            return;
+        }
+
+        for (Ingrediente ing : todosLosIngredientes) {
+            if (ing.getId() <= 0) {
+                continue;
+            }
+            obtenerStock(ing.getId());
+        }
     }
 
     public void filtrar(String query) {
@@ -156,11 +290,41 @@ public class InsumosViewModel extends AndroidViewModel {
     }
 
     /**
+     * Actualiza el stock de un ingrediente presentes en la lista observada, si existe.
+     */
+    private void actualizarStockEnLista(Ingrediente actualizado) {
+        if (todosLosIngredientes == null) {
+            return;
+        }
+        for (int i = 0; i < todosLosIngredientes.size(); i++) {
+            if (todosLosIngredientes.get(i).getId() == actualizado.getId()) {
+                todosLosIngredientes.set(i, actualizado);
+                break;
+            }
+        }
+        ingredientes.postValue(new ArrayList<>(todosLosIngredientes));
+        aplicarFiltro();
+    }
+
+    private Ingrediente obtenerIngredientePorId(int id) {
+        if (todosLosIngredientes == null) {
+            return null;
+        }
+        for (Ingrediente ing : todosLosIngredientes) {
+            if (ing.getId() == id) {
+                return ing;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Crea un ingrediente nuevo (id == 0) o actualiza uno existente (id > 0).
      */
     public void guardarIngrediente(Ingrediente ingrediente) {
         loading.postValue(true);
         mensajeError.postValue(null);
+        mensajeStock.postValue(null);
         actualizarVisibilidad();
 
         if (!esSesionValida()) {
@@ -191,7 +355,7 @@ public class InsumosViewModel extends AndroidViewModel {
                     Log.d(TAG, "Ingrediente " + (esNuevo ? "creado" : "actualizado") + " (HTTP " + response.code() + ")");
                     eventoGuardado.postValue(new Event<>(new EventoGuardado(true,
                             esNuevo ? "Ingrediente cargado correctamente" : "Precio actualizado correctamente")));
-                    cargarIngredientes(); // recargar lista desde el backend
+                    cargarIngredientes(true); // recargar lista + stocks desde el backend
                 } else {
                     String msg = obtenerMensajeError(response.code(), response.errorBody());
                     mensajeError.postValue(msg);
@@ -239,12 +403,12 @@ public class InsumosViewModel extends AndroidViewModel {
                     int fin = json.lastIndexOf('"');
                     if (dosPuntos > -1 && inicio > dosPuntos && fin > inicio) {
                         return json.substring(inicio + 1, fin);
-                      }
+                    }
                 }
             } catch (Exception ignored) {
                 // cae al mensaje genérico
             }
-      }
+        }
 
         switch (codigo) {
             case 400:

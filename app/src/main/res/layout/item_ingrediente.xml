@@ -54,6 +54,16 @@
             android:textSize="12sp"
             android:textColor="@color/nav_icon_inactive" />
 
+        <!-- Stock -->
+        <TextView
+            android:id="@+id/txtStockIngrediente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Stock: 0,00"
+            android:textSize="12sp"
+            android:textColor="@color/text_light" />
+
         <!-- Hint de edición -->
         <TextView
             android:id="@+id/txtEditarPrecio"

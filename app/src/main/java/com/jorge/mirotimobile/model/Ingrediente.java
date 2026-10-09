@@ -4,11 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * 🥕 Modelo Ingrediente — representa un insumo/ingrediente con su precio
- * obtenido desde la API MiRoti (backend .NET).
+ * y su STOCK actual, obtenidos desde la API MiRoti (backend .NET).
  *
- * Formato real del GET api/ingredientes (camelCase):
+ * <p>Formato real del GET api/ingredientes (camelCase):
  * { "id": 1, "nombre": "Papa", "costoUnitario": 950.00,
- *   "unidadMedida": { "id": 1, "nombre": "Kilogramo", "abreviatura": "kg" } }
+ *   "unidadMedida": { "id": 1, "nombre": "Kilogramo", "abreviatura": "kg" },
+ *   "stockActual": 10000 }
+ *
+ * <p>El stock es decimal(10,2) en la base de datos, por eso lo decimos
+ * como double y lo mostramos con 2 decimales (sin coma como separador).
  */
 public class Ingrediente implements java.io.Serializable {
 
@@ -24,6 +28,10 @@ public class Ingrediente implements java.io.Serializable {
     // 💲 Precio de compra actual en el supermercado (decimal(10,2) en la DB)
     @SerializedName(value = "costoUnitario", alternate = {"CostoUnitario", "precio", "Precio"})
     private double precio;
+
+    // 📦 Stock disponible actual (decimal(10,2) en la DB)
+    @SerializedName(value = "stockActual", alternate = {"StockActual", "stock", "Stock"})
+    private double stockActual;
 
     // 📦 Unidad de medida anidada, como la devuelve el backend
     @SerializedName(value = "unidadMedida", alternate = {"UnidadMedida"})
@@ -44,10 +52,15 @@ public class Ingrediente implements java.io.Serializable {
         private String abreviatura;
 
         public int getId() { return id; }
+
         public void setId(int id) { this.id = id; }
+
         public String getNombre() { return nombre; }
+
         public void setNombre(String nombre) { this.nombre = nombre; }
+
         public String getAbreviatura() { return abreviatura; }
+
         public void setAbreviatura(String abreviatura) { this.abreviatura = abreviatura; }
     }
 
@@ -87,6 +100,14 @@ public class Ingrediente implements java.io.Serializable {
         this.precio = precio;
     }
 
+    public double getStockActual() {
+        return stockActual;
+    }
+
+    public void setStockActual(double stockActual) {
+        this.stockActual = stockActual;
+    }
+
     public UnidadMedidaInfo getUnidadMedida() {
         return unidadMedida;
     }
@@ -106,6 +127,11 @@ public class Ingrediente implements java.io.Serializable {
             }
         }
         return "";
+    }
+
+    /** Verifica que el stock sea mayor a 0 (el ingrediente está disponible). */
+    public boolean tieneStock() {
+        return stockActual > 0;
     }
 
     public boolean isActivo() {
